@@ -1,0 +1,195 @@
+<%- include('partials/header') %>
+
+  </head>
+
+  <body>
+
+    <!-- first header for file edit buttons -->
+    <nav id="mainNavbar" class="navbar navbar-dark  navbar-expand-md py-0 fixed-top">
+      <a href="#" class="navbar-brand">SIMULATOR</a>
+      <button class="navbar-toggler" data-toggle="collapse" data-target="#navLinks" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navLinks">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a href="" class="nav-link"> FILE</a>
+          </li>
+          <li class="nav-item">
+            <a href="" class="nav-link"> EDIT</a>
+          </li>
+          <li class="nav-item">
+            <a href="" class="nav-link">HELP</a>
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+
+    <!-- for run buttons and commands -->
+    <section class="Top">
+      <div class="Top_buttons">
+        <!-- Step forward -->
+        <button class="reset">&#8635</button>
+        <button class="Step_fd">&#128896;</button>
+        <!-- Step backward -->
+        <button class="Step_bk">&#128898;</button>
+        <button class="Run">Run</button>
+      </div>
+    </section>
+
+
+
+
+    <div class="main_container">
+      <div class="container12">
+        <div class="side_bar ">
+          <button id="side_but1" class="side_button">Editor</button>
+          <button id="side_but2" class="side_button">Cache</button>
+          <button id="side_but3" class="side_button">Memory</button>
+        </div>
+        <div class="holder" id="editor_id" style="display: block">
+
+          <div class="text_holder">
+
+            <div class="text">
+
+              <div class="editor1">
+                <div class="num" id="1"></div>
+                <div class="text1">
+                  <!-- <textarea name="a" id="e1" class="abc" cols="30" rows="10"></textarea> -->
+                  <div id="wrapper">
+                    <textarea id="mytextarea" cols="80" rows="10" placeholder="USE ME"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="editor2">
+                <div class="num" id="2"></div>
+                <div class="text2">
+                  <!-- <textarea name="a" id="e1" class="abc" cols="30" rows="10"></textarea> -->
+                  <div id="wrapper2">
+                    <textarea id="mytextarea2" cols="80" rows="10" placeholder="USE ME"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="register">
+              <!-- <button class="reg_button">Register1</button>
+                        <button class="reg_button">Register2</button> -->
+
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary">
+                  <input id="radio_reg1" type="radio" name="options" id="option1" checked> Register1
+                </label>
+                <label class="btn btn-primary">
+                  <input id="radio_reg2" type="radio" name="options" id="option2"> Register2
+                </label>
+              </div>
+
+              <div class="reg_header">
+                <!-- <li id="regs"> -->
+                <div>
+                  <ul>
+                    <li id="decimal" style="display: block">
+                      <table class="register1-table" cellspacing="0" id="reg1_table" style="display : block">
+                        <tr>
+                          <td class="t1"><button class="b1" id="reg_heading">Name</button></td>
+                          <td class="t1"><input type="text" value="Value" id="val_heading"></td>
+                        </tr>
+                        <% for(let i=0;i<=31;i++) { %>
+                          <tr>
+                            <td><button class="b1" id="reg1<%= i %>">x<%= i %></button></td>
+                            <td><input type="text"></td>
+                          </tr>
+                          <% } %>
+                      </table>
+
+                      <table class="register2-table" cellspacing="0" id="reg2_table" style="display : none">
+                        <tr>
+                          <td class="t1"><button class="b1" id="reg_heading">Name</button></td>
+                          <td class="t1"><input type="text" value="Value" id="val_heading"></td>
+                        </tr>
+                        <% for(let i=0;i<=31;i++) { %>
+                          <tr>
+                            <td><button class="b1" id="reg2<%= i %>">y<%= i %></button></td>
+                            <td><input type="text"></td>
+                          </tr>
+                          <% } %>
+                      </table>
+
+                    </li>
+
+                  </ul>
+                </div>
+                <!-- </li> -->
+              </div>
+
+
+
+
+
+
+
+            </div>
+          </div>
+        </div>
+        <!-- cache_holder -->
+        <div class="cache_holder" id="cache_id" style="display: none">
+
+
+        </div>
+
+
+        <!-- memory -->
+
+        <div class="memory_holder " id="memory_id" style="display: none">
+
+          <div class="reg_header" id="okok">
+            <!-- <li id="regs"> -->
+            <div>
+              <ul>
+                <li id="decimal" style="display: block">
+                  <table class="register1-table" cellspacing="0" id="reg1_table" style="display : block">
+                    <tr>
+                      <td class="t2"><input type="text" readonly value="Address" class="col_name1"></td>
+                      <td class="t2"><input type="text" readonly value="Word" class="col_name1"></td>
+                      <td class="t2"><input type="text" readonly value="Byte1" class="col_name1"></td>
+                      <td class="t2"><input type="text" readonly value="Byte2" class="col_name1"></td>
+                      <td class="t2"><input type="text" readonly value="Byte3" class="col_name1"></td>
+                      <td class="t2"><input type="text" readonly value="Byte4" class="col_name1"></td>
+                    </tr>
+                    <% for(let i=0;i<=31;i++) { %>
+                      <tr>
+                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
+                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
+                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
+                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
+                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
+                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
+                      </tr>
+                      <% } %>
+                  </table>
+
+                </li>
+
+              </ul>
+            </div>
+            <!-- </li> -->
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+
+    </div>
+    </div>
+    <script src="/javascripts/script1.js"></script>
+    <script src="/javascripts/script2.js"></script>
+    <script src="/javascripts/register.js"></script>
+    <script src="/javascripts/sidebar.js"></script>
+  </body>
+
+  </html>

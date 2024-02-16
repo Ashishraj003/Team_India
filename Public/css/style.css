@@ -1,0 +1,383 @@
+.navbar {
+  background-color: brown;
+  /* margin-bottom: 4em; */
+  height: 3em;
+}
+
+body {
+  background-color: black;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  /* display: flex; */
+}
+
+.Top {
+  /* height: 2.5em */
+  background-color: rgb(46, 46, 46);
+  margin-top: 3em;
+}
+
+.reset {
+  margin-right: 1em;
+}
+
+.Run {
+  margin-left: 1em;
+}
+
+.Top_buttons {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.Top_buttons:first-child {
+  margin-left: 2em;
+}
+
+.main_container {
+  height: 85.5vh;
+  display: flex;
+}
+
+.side_bar {
+  background-color: rgb(46, 46, 46);
+  height: 100%;
+  width: 7%;
+  padding: 0px;
+}
+
+.container12 {
+  height: 100%;
+  margin: 0px;
+  width: 100%;
+  display: flex;
+  /* flex: 0; */
+}
+
+.holder {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+}
+
+.side_button {
+  height: 4em;
+  width: 100%;
+  color: white;
+  background-color: rgb(46, 46, 46);
+  display: block;
+}
+
+.side_button:hover {
+  height: 4em;
+  width: 100%;
+  color: white;
+  background-color: #a4a2a2;
+  display: block;
+}
+
+/* .holder { */
+/* display: flex; */
+/* } */
+
+.text_holder {
+  display: flex;
+  /* width: 290em; */
+}
+
+.text {
+  background-color: yellow;
+  /* width: 53em; */
+  display: flex;
+}
+
+/* Style the tab */
+
+/* Style the buttons inside the tab */
+.btn-group {
+  background-color: #3d3d3d;
+}
+
+.btn-primary {
+  background-color: #a52a2a;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 8px 20px;
+  margin-left: 7px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.btn:hover {
+  background-color: #7d1f1f;
+}
+
+/* Create an active/current tablink class */
+/* .btn.active {
+  background-color: #7d1f1f;
+} */
+
+/* Style the tab content */
+
+#mytextarea {
+  width: auto;
+  /* display: flex; */
+  /* width: 50%; */
+  width: 27.6em;
+  height: 500px;
+  font-size: 15px;
+  font-family: monospace;
+  line-height: 15px;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+  resize: both;
+  color: rgb(255, 255, 255);
+  border: 0;
+  background-color: #222;
+  white-space: pre;
+  overflow: auto;
+  border: 0px;
+  padding-left: 10px;
+}
+
+/* supported only in opera */
+#mytextarea {
+  scrollbar-arrow-color: #ee8;
+  scrollbar-base-color: #444;
+  scrollbar-track-color: #fdfdfd;
+  scrollbar-face-color: #444;
+  /* outer light */
+  scrollbar-3dlight-color: #444;
+  /* inner light */
+  scrollbar-highlight-color: #666;
+  /* outer dark */
+  scrollbar-darkshadow-color: #444;
+  /* inner dark */
+  scrollbar-shadow-color: #222;
+}
+
+#mytextarea2 {
+  width: auto;
+  width: 27.6em;
+
+  /* width: 50%; */
+  height: 500px;
+  font-size: 15px;
+  font-family: monospace;
+  line-height: 15px;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+  resize: both;
+  color: rgb(255, 255, 255);
+  border: 0;
+  background-color: #222;
+  white-space: pre;
+  overflow: auto;
+  border: 0px;
+  padding-left: 10px;
+}
+
+ul {
+  padding-left: 0px;
+}
+
+/* supported only in opera */
+#mytextarea2 {
+  scrollbar-arrow-color: #ee8;
+  scrollbar-base-color: #444;
+  scrollbar-track-color: #fdfdfd;
+  scrollbar-face-color: #444;
+  /* outer light */
+  scrollbar-3dlight-color: #444;
+  /* inner light */
+  scrollbar-highlight-color: #666;
+  /* outer dark */
+  scrollbar-darkshadow-color: #444;
+  /* inner dark */
+  scrollbar-shadow-color: #222;
+}
+
+/* #wrapper {
+    width: 100%;
+} */
+
+.text1 {
+  background-color: #121212;
+}
+
+.register1 {
+  width: 50%;
+  /* display: flex; */
+  background-color: rgb(186, 186, 189);
+}
+
+.reg_header {
+  height: 22.5em;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.Name {
+  font-size: 1.5em;
+}
+
+.button_holder {
+  display: flex;
+}
+
+.name1 {
+  height: 3em;
+  padding-right: 1.6em;
+  border-right: 0.1em solid black;
+  border-bottom: 0.1em solid black;
+}
+
+.Value {
+  padding-left: 1em;
+  font-size: 1.5em;
+}
+
+.value1 {
+  width: 100%;
+  height: 3em;
+  border-right: 0.1em solid black;
+  border-bottom: 0.1em solid black;
+}
+
+.f1 {
+  display: inline;
+}
+
+.b1 {
+
+  color: white;
+  /* White text */
+  cursor: pointer;
+  /* Pointer/hand icon */
+  display: block;
+  background-color: #a52a2a;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 17px;
+  /* border: none; */
+
+
+  /* me1 */
+  /* padding: 0px;
+  width: 37.56px;
+  height: 30px;
+  border: 1px solid black; */
+
+  /* me2 */
+  padding: 0px;
+  width: 51.587px;
+  height: 30px;
+  border: 1px solid black;
+}
+
+td {
+  padding: 0px;
+
+}
+
+
+
+
+
+/* Change background color of buttons on hover */
+.b1:hover {
+  background-color: #7d1f1f;
+}
+
+/* table {
+  border-collapse: collapse;
+} */
+
+table input {
+  font-weight: 500;
+  font-size: 2es;
+  color: blue;
+  /* color: rgb(44, 16, 3); */
+  text-align: left;
+  /* background-color: #d3bdbd; */
+  background-color: #e7e4e4;
+  border: 0px;
+  width: 185.33px;
+  height: 30px;
+  border: 1px solid black;
+}
+
+/* register heading  */
+#reg_heading {
+  text-align: center;
+  background-color: #efc6c6;
+  color: #7d1f1f;
+  font-weight: 500;
+}
+
+#val_heading {
+  text-align: center;
+  color: #7d1f1f;
+  background-color: #efc6c6;
+}
+
+table {
+  text-align: left;
+  position: relative;
+}
+
+/* 
+tr {
+  background: white;
+  position: sticky;
+  top: 0;
+} */
+
+.t1 {
+  background: white;
+  position: sticky;
+  top: 0;
+}
+
+
+.t2 {
+  background: white;
+  position: sticky;
+  top: 0;
+}
+
+
+
+
+
+
+/* memory styles */
+.col_name1 {
+  text-align: center;
+  font-weight: bold;
+  color: rgb(44, 16, 3);
+  background-color: #efc6c6;
+
+}
+
+.col_name {
+  text-align: center;
+  font-weight: normal;
+  color: rgb(44, 16, 3);
+}
+
+/* memory style end */
