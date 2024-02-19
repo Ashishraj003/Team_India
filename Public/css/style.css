@@ -90,7 +90,7 @@ body {
 }
 
 .text {
-  background-color: yellow;
+  background-color: black;
   /* width: 53em; */
   display: flex;
 }
@@ -132,7 +132,7 @@ body {
   width: auto;
   /* display: flex; */
   /* width: 50%; */
-  width: 27.6em;
+  width: 31em;
   height: 500px;
   font-size: 15px;
   font-family: monospace;
@@ -168,7 +168,7 @@ body {
 
 #mytextarea2 {
   width: auto;
-  width: 27.6em;
+  width: 31em;
 
   /* width: 50%; */
   height: 500px;

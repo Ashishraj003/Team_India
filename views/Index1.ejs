@@ -13,13 +13,13 @@
       <div class="collapse navbar-collapse" id="navLinks">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a href="" class="nav-link"> FILE</a>
+            <a href="" class="nav-link" id="enjoy"> FILE</a>
           </li>
           <li class="nav-item">
-            <a href="" class="nav-link"> EDIT</a>
+            <a href="" class="nav-link" id="enjoy"> EDIT</a>
           </li>
           <li class="nav-item">
-            <a href="" class="nav-link">HELP</a>
+            <a href="" class="nav-link" id="enjoy">HELP</a>
           </li>
         </ul>
       </div>
@@ -30,7 +30,7 @@
     <section class="Top">
       <div class="Top_buttons">
         <!-- Step forward -->
-        <button class="reset">&#8635</button>
+        <button class="reset" id="restart">&#8635</button>
         <button class="Step_fd">&#128896;</button>
         <!-- Step backward -->
         <button class="Step_bk">&#128898;</button>
@@ -59,7 +59,8 @@
                 <div class="text1">
                   <!-- <textarea name="a" id="e1" class="abc" cols="30" rows="10"></textarea> -->
                   <div id="wrapper">
-                    <textarea id="mytextarea" cols="80" rows="10" placeholder="USE ME"></textarea>
+                    <!-- <textarea id="mytextarea" cols="80" rows="10" placeholder="USE ME"></textarea> -->
+                    <div id="mytextarea">#Write Your Code Here</div>
                   </div>
                 </div>
               </div>
@@ -68,7 +69,8 @@
                 <div class="text2">
                   <!-- <textarea name="a" id="e1" class="abc" cols="30" rows="10"></textarea> -->
                   <div id="wrapper2">
-                    <textarea id="mytextarea2" cols="80" rows="10" placeholder="USE ME"></textarea>
+                    <!-- <textarea id="mytextarea2" cols="80" rows="10" placeholder="USE ME"></textarea> -->
+                    <div id="mytextarea2">#Write Your Code Here</div>
                   </div>
                 </div>
               </div>
@@ -100,7 +102,7 @@
                         <% for(let i=0;i<=31;i++) { %>
                           <tr>
                             <td><button class="b1" id="reg1<%= i %>">x<%= i %></button></td>
-                            <td><input type="text"></td>
+                            <td><input type="text" id="reg1Text<%= i %>" value="0"></td>
                           </tr>
                           <% } %>
                       </table>
@@ -113,7 +115,7 @@
                         <% for(let i=0;i<=31;i++) { %>
                           <tr>
                             <td><button class="b1" id="reg2<%= i %>">y<%= i %></button></td>
-                            <td><input type="text"></td>
+                            <td><input type="text" id="reg2Text<%= i %>" value="0"></td>
                           </tr>
                           <% } %>
                       </table>
@@ -159,14 +161,15 @@
                       <td class="t2"><input type="text" readonly value="Byte3" class="col_name1"></td>
                       <td class="t2"><input type="text" readonly value="Byte4" class="col_name1"></td>
                     </tr>
-                    <% for(let i=0;i<=31;i++) { %>
+                    <% for(let i=0;i<=(2**5);i++) { %>
                       <tr>
-                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
-                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
-                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
-                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
-                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
-                        <td><input type="text" readonly class="col_name" value="<%= i %>"></td>
+                        <td><input type="text" readonly class="col_name" value="<%= (i*4).toString(16) %>"></td>
+                        <td><input type="text" readonly class="col_name" value="0"></td>
+                        <td><input type="text" readonly class="col_name" value="0"></td>
+                        <td><input type="text" readonly class="col_name" value="0"></td>
+                        <td><input type="text" readonly class="col_name" value="0"></td>
+                        <td><input type="text" readonly class="col_name" value="0"></td>
+                        <!-- parseInt(i, 16) -->
                       </tr>
                       <% } %>
                   </table>
@@ -186,10 +189,13 @@
 
     </div>
     </div>
-    <script src="/javascripts/script1.js"></script>
-    <script src="/javascripts/script2.js"></script>
+
     <script src="/javascripts/register.js"></script>
     <script src="/javascripts/sidebar.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.5.3/ace.js"></script>
+    <script type="module" src="/javascripts/editor.js"></script>
+    <script type="module" src="/javascripts/Processor.js"></script>
+
   </body>
 
   </html>

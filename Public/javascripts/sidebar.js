@@ -12,18 +12,22 @@ button1.addEventListener('click', function () {
     // location.href = "/";
     editor.style.display = "block";
     cache.style.display = "none";
-    memory.style.display="none";
+    memory.style.display = "none";
 })
 
 button2.addEventListener('click', function () {
     // location.href = "/cache";
     editor.style.display = "none";
     cache.style.display = "block";
-    memory.style.display="none";
+    memory.style.display = "none";
 })
 button3.addEventListener('click', function () {
     // location.href = "/memory";
     editor.style.display = "none";
     cache.style.display = "none";
-    memory.style.display="block";
+    memory.style.display = "block";
 })
+
+
+
+
