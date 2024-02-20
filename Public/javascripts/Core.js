@@ -12,6 +12,13 @@ class Core {
         const object = new Instruction(instruction);
         console.log(object.type);
         switch (object.type) {
+            case "srli":
+                console.log("FOund");
+                this.srli(object);
+                break;
+            case "and":
+                this.and(object);
+                break;
             case "add":
                 this.add(object);
                 break;
@@ -67,6 +74,8 @@ class Core {
                 this.jr(object);
                 break;
             default:
+                console.log("Instruction not found");
+                console.log("---+++++++++++++++++++");
                 break;
         }
         this.register[0] = 0;
@@ -92,7 +101,17 @@ class Core {
             regUpdate.value = this.register[object.rd];
         }
     }
-
+    and(instructionObj)
+    {
+        this.register[instructionObj.rd] = this.register[instructionObj.rs1] & this.register[instructionObj.rs2];
+    }
+    srli(instructionObj)
+    {
+        this.register[instructionObj.rd] = (this.register[instructionObj.rs1])>>(instructionObj.imd);
+        console.log(this.register[instructionObj.rd]);
+        console.log("=============");
+        console.log(this.register[instructionObj.rs1]>>instructionObj.imd);
+    }
     add(instructionObj) {
         this.register[instructionObj.rd] = this.register[instructionObj.rs1] + this.register[instructionObj.rs2];
     }
@@ -151,6 +170,7 @@ class Core {
             this.pc = this.labels[instructionObj.label];
         }
     }
+    
     li(instructionObj) {
         // this.rd = this.#valueof(components[1]);
         // this.imd = parseInt(components[2]);

@@ -329,7 +329,7 @@ table input {
   font-weight: 500;
 }
 
-#val_heading {
+.val_heading {
   text-align: center;
   color: #7d1f1f;
   background-color: #efc6c6;

@@ -74,12 +74,14 @@ class Instruction {
     }
     console.log(components);
     switch (this.type) {
+      case "and":
       case "add":
       case "sub":
         this.rd = this.#valueof(components[1]);
         this.rs1 = this.#valueof(components[2]);
         this.rs2 = this.#valueof(components[3]);
         break;
+      case "srli":
       case "addi":
         this.rd = this.#valueof(components[1]);
         this.rs1 = this.#valueof(components[2]);

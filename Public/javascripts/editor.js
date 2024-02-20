@@ -12,12 +12,10 @@ let edt2 = document.querySelector("#mytextarea2");
 
 ace.edit(edt2, {
     theme: "ace/theme/cobalt",
-    // mode: "ace/mode/assembly_x86",
     // Add some custom RISC-V highlighting rules
 });
 
 
-// let ola1 = document.querySelector(".ace_line");
 
 
 

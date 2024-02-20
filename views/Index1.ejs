@@ -97,7 +97,7 @@
                       <table class="register1-table" cellspacing="0" id="reg1_table" style="display : block">
                         <tr>
                           <td class="t1"><button class="b1" id="reg_heading">Name</button></td>
-                          <td class="t1"><input type="text" value="Value" id="val_heading"></td>
+                          <td class="t1"><input type="text" value="Value" class="val_heading"></td>
                         </tr>
                         <% for(let i=0;i<=31;i++) { %>
                           <tr>
@@ -110,7 +110,7 @@
                       <table class="register2-table" cellspacing="0" id="reg2_table" style="display : none">
                         <tr>
                           <td class="t1"><button class="b1" id="reg_heading">Name</button></td>
-                          <td class="t1"><input type="text" value="Value" id="val_heading"></td>
+                          <td class="t1"><input type="text" value="Value" class="val_heading"></td>
                         </tr>
                         <% for(let i=0;i<=31;i++) { %>
                           <tr>
@@ -126,29 +126,18 @@
                 </div>
                 <!-- </li> -->
               </div>
-
-
-
-
-
-
-
             </div>
           </div>
         </div>
         <!-- cache_holder -->
         <div class="cache_holder" id="cache_id" style="display: none">
 
-
         </div>
-
-
         <!-- memory -->
 
         <div class="memory_holder " id="memory_id" style="display: none">
 
           <div class="reg_header" id="okok">
-            <!-- <li id="regs"> -->
             <div>
               <ul>
                 <li id="decimal" style="display: block">
@@ -161,7 +150,7 @@
                       <td class="t2"><input type="text" readonly value="Byte3" class="col_name1"></td>
                       <td class="t2"><input type="text" readonly value="Byte4" class="col_name1"></td>
                     </tr>
-                    <% for(let i=0;i<=(2**5);i++) { %>
+                    <% for(let i=0;i<=(2**10);i++) { %>
                       <tr>
                         <td><input type="text" readonly class="col_name" value="<%= (i*4).toString(16) %>"></td>
                         <td><input type="text" readonly class="col_name" value="0"></td>
@@ -169,7 +158,6 @@
                         <td><input type="text" readonly class="col_name" value="0"></td>
                         <td><input type="text" readonly class="col_name" value="0"></td>
                         <td><input type="text" readonly class="col_name" value="0"></td>
-                        <!-- parseInt(i, 16) -->
                       </tr>
                       <% } %>
                   </table>

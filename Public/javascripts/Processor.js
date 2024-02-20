@@ -23,7 +23,6 @@ class Processor {
         // var queue = [];
     }
     parseDirective(directive) {
-        
         switch (directive[0].split('.')[1]) {
             
             case "zero":
@@ -50,7 +49,6 @@ class Processor {
             
           break;
         }
-
     }
     set(x) {// labels handelled
         /*
@@ -98,7 +96,7 @@ class Processor {
                     }
                 }
                 this.CoreInstructions[x][i] = k;
-                labels[k] = i+1;
+                labels[k] = i;
                 console.log(`Instruction parsed is now ${this.CoreInstructions[x][i]} at ${labels[k]}`);
             }
             else if(this.CoreInstructions[x][i].includes('.word'))//handles .word written directly....
@@ -111,13 +109,16 @@ class Processor {
     run() {
         // if statement for string end for both
         if (this.cores[0].pc < this.CoreInstructions[0].length) {
-            this.cores[0].execute(this.CoreInstructions[0][this.cores[0].pc]);
+            this.cores[0].execute(this.CoreInstructions[0][this.cores[0].pc].replaceAll('\r', ''));
         }
         if (this.cores[1].pc < this.CoreInstructions[1].length) {
-            this.cores[1].execute(this.CoreInstructions[1][this.cores[1].pc]);
+            this.cores[1].execute(this.CoreInstructions[1][this.cores[1].pc].replaceAll('\r', ''));
         }
+
     }
     play() {
+        this.cores[0].pc=0;
+        this.cores[1].pc = 0;
         while (this.cores[0].pc < this.CoreInstructions[0].length || this.cores[1].pc < this.CoreInstructions[1].length) {
             console.log(`the reg 2  is ${this.cores[0].register[2]} & 1 is is ${this.cores[0].register[1]}\n`);
             this.run(); 
