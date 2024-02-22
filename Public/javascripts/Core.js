@@ -1,5 +1,5 @@
 import Instruction from "./Instruction.js";
-import Processor from "./Processor.js";
+import {getBus, setBus} from "./Processor.js";
 class Core {
     constructor(num) {
         this.register = new Array(32).fill(0);
@@ -7,7 +7,7 @@ class Core {
         this.flag = num;
         this.labels = {};
     }
-
+    
     execute(instruction) {
         const object = new Instruction(instruction);
         console.log(object.type);
@@ -28,9 +28,6 @@ class Core {
             case "addi":
                 this.addi(object);
                 break;
-            case "subi":
-                this.i(object);
-                break;
             case "lw":
                 this.lw(object);
                 break;
@@ -49,8 +46,8 @@ class Core {
             case "bne":
                 this.bne(object);
                 break;
-            case "bge":
-                this.bge(object);
+            case "bgt":
+                this.bgt(object);
                 break;
             case "blt":
                 this.blt(object);
@@ -85,7 +82,7 @@ class Core {
 
     writeBack(object) {// writes to the front end ...
 
-        if ((object.type !== "sw" || object.type !== "lw") && object.rd) {
+        if ((object.type !== "sw"  && object.type !== "lw") && object.rd) {
             if (object.rd != 0) {
                 const regUpdate = document.getElementById(`reg${this.flag}Text${object.rd}`);
                 regUpdate.value = this.register[object.rd];
@@ -98,6 +95,7 @@ class Core {
             // will store the word
             const regUpdate = document.getElementById(`reg${this.flag}Text${object.rd}`);
             console.log(this.register[object.rd]);
+            console.log(object.rd);
             regUpdate.value = this.register[object.rd];
         }
     }
@@ -108,6 +106,8 @@ class Core {
     srli(instructionObj)
     {
         this.register[instructionObj.rd] = (this.register[instructionObj.rs1])>>(instructionObj.imd);
+
+        // printing
         console.log(this.register[instructionObj.rd]);
         console.log("=============");
         console.log(this.register[instructionObj.rs1]>>instructionObj.imd);
@@ -122,15 +122,27 @@ class Core {
         this.register[instructionObj.rd] = this.register[instructionObj.rs1] + instructionObj.imd;
     }
     lw(instructionObj) {
-        //lw x1 4(x2) rd -> x1, rs1 -> x2 , imd ->0
-        // instructionObj.imd /= 4;
-        this.register[instructionObj.rd] = Processor.getBus(instructionObj.rs1 + instructionObj.imd);
+        //lw x1 4(x2) rd -> x1, rs1 -> x2 , imd ->4
+        debugger;
+        if(instructionObj.imd !=undefined){
+            let val =this.register[instructionObj.rs1]/4 + instructionObj.imd;
+            console.log(this.register[instructionObj.rs1]/4 + instructionObj.imd);
+            console.log(instructionObj.rd);
+            console.log("1234567890-");
+            
+            this.register[instructionObj.rd] = getBus(val);
+            console.log(this.register[instructionObj.rd]);
+        }else{
+            
+            this.register[instructionObj.rd] = this.labels[instructionObj.label];
+        }
     }
     sw(instructionObj) {
         //lw x1 0(x2) rd -> x1, rs1 -> x2 , imd ->0
-        instructionObj.imd /= 4;
+        let val = this.register[instructionObj.rs1] + instructionObj.imd;
         // this.register[instructionObj.rs2 + instructionObj.imd] = this.register[instructionObj.rs1];
-        Processor.getBus(instructionObj.rs2 + instructionObj.imd) = this.register[instructionObj.rs1];
+        console.log(instructionObj.rs1);
+        setBus(this.register[instructionObj.rs2] + instructionObj.imd, val);
 
     }
     li(instructionObj) {
@@ -150,9 +162,13 @@ class Core {
             console.log(this.pc);
         }
     }
-    bge(instructionObj) {
+    bgt(instructionObj) {
+        console.log("====================================================");
+        console.log(this.register[instructionObj.rs1]);
+        console.log(this.register[instructionObj.rs2]);
         if (this.register[instructionObj.rs1] >= this.register[instructionObj.rs2]) {
             this.pc = this.labels[instructionObj.label];
+            console.log(this.pc);
         }
     }
     blt(instructionObj) {

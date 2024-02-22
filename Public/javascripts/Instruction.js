@@ -8,21 +8,12 @@ class Instruction {
   // let offset;
   // type
   // imd
-  
+
   constructor(instruct) {
     this.alias = {};
-    if (instruct.includes('#')) {
-      let k = instruct.split('#');
-      instruct = k[0];
-    }
-    // arr: .zero 80
-    // to parse .word etc... base: .word 0x1000000.
-    // arr: is handled in porcessor.js
-   
-    else if(instruct)
-    {
+  
+    // 003 repeted code bad practice
 
-    } 
     let components = this.#split(instruct);
     this.type = components[0];
 
@@ -59,19 +50,18 @@ class Instruction {
     this.alias['t6'] = 'x31';
 
 
-    if (components[0]) {
-      if(components[1])
-      {
-        if (components[1].charAt(0) != 'x' && components[0] != "j" && components[0] != "la") {
-          components[1] = this.alias[components[1]];
-        }
-     }
-    }
-    if (components[2]) {
-      if (components[1].charAt(0) != 'x' && components[0] != "lw" && components[0] != "sw" && components[0] != "li" && components[0] != "jalr" && components[0] != "jal") {
-        components[2] = this.alias[components[2]];
-      }
-    }
+    // if (components[0]) {
+    //   if (components[1]) {
+    //     if (components[1].charAt(0) != 'x' && components[0] != "j" && components[0] != "la") {
+    //       components[1] = this.alias[components[1]];
+    //     }
+    //   }
+    // }
+    //   if (components[1]) {
+    //   if (components[1] && components[1].charAt(0) != 'x' && components[0] != "lw" && components[0] != "sw" && components[0] != "li" && components[0] != "jalr" && components[0] != "jal") {
+    //     components[2] = this.alias[components[2]];
+    //   }
+    // }
     console.log(components);
     switch (this.type) {
       case "and":
@@ -90,33 +80,21 @@ class Instruction {
       case "lw":
         this.rd = this.#valueof(components[1]);
         // Assuming format is lw x1 0(x2)
-        let a1 = components[2].split("(");
-        if (a1.charAt(0)) {
-          this.imd = parseInt((a1.charAt(0)));
-        }
-        else {
-          a1.charAt(0) = 0;
-        }
-        this.rs1 = this.#valueof(a1.charAt(1).replace('(', ''));
-        if (this.rs1[0] != 'x') {
-          this.rs1 = this.alias[this.rs1];
+        if(components[2].includes("(")){
+          let a1 = components[2].split("(");
+          this.imd = parseInt(a1[0])/4;
+          this.rs1 = this.#valueof(a1[1].replace(')', ''));
+        }else{
+          this.label = components[2];
         }
         break;
       case "sw":
         this.rs1 = this.#valueof(components[1]);
         // Assuming format is sw x1 0(x2)
         let a2 = components[2].split("(");
-        if (a2.charAt(0)) {
-          this.imd = parseInt((a2.charAt(0)));
-        }
-        else {
-          a2.charAt(0) = 0;
-        }
-        this.imd = parseInt((a2.charAt(0)));
-        this.rs2 = this.#valueof(a2.charAt(1).replace('(', ''));
-        if (this.rs2[0] != 'x') { this.rs2 = this.alias[rs2]; }
+        this.imd = parseInt(a2[0]);
+        this.rs2 = this.#valueof(a2[1].replace(')', ''));
         break;
-
       case "la":
         this.str = components[1];
       case "li":
@@ -125,9 +103,9 @@ class Instruction {
         break;
       case "beq":
       case "bne":
-      case "bge":
+      case "bgt":
       case "blt":
-      case "bgeu":
+      case "bgtu":
       case "bltu":
         this.rs1 = this.#valueof(components[1]);
         this.rs2 = this.#valueof(components[2]);
@@ -139,7 +117,7 @@ class Instruction {
         this.offset = parseInt(components[3]);
         break;
       case "jal":
-        this.rd = this.#valueof(components[1]);
+        this.rs1 = this.#valueof(components[1]);
         this.label = components[2];
         break;
 
@@ -151,8 +129,8 @@ class Instruction {
         break;
       // Add more cases as needed for other instructions
       default:
-        // Handle unsupported instruction type
-        
+      // Handle unsupported instruction type
+
     }
   }
   show() {
@@ -160,6 +138,7 @@ class Instruction {
     console.log(this.rs2);
     console.log(this.label);
   }
+
   #split(s) {
     let i = 0;
     let a = [];
@@ -182,7 +161,11 @@ class Instruction {
   }
 
   #valueof(s) {
-    return parseInt(s.replace('x', ''))
+    if(s.includes('x'))
+    {
+      return parseInt(s.replace('x', ''));
+    }
+    return parseInt((this.alias[s]).replace('x', ''));
   }
 }
 

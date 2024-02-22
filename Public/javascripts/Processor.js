@@ -4,16 +4,27 @@ import { getValue1, getValue2 } from "./editor.js";
 
 class Processor {
     constructor() {
-        this.memory = new Array(2 ** 5).fill(0);
+        this.memory = [];
+        for(let i = 0;i<1024;i++){
+            this.memory.push(0);
+        }
         this.clock = 0;
         this.cores = [new Core(1), new Core(2)];
         this.freeMemInitial = 0;
-        this.freeMemfinal = 2**5 -1;
+        this.freeMemfinal = 2 ** 12 - 1;
+        this.pcs = [-1, -1]; //pc start
+        this.strings={};
     }
     init(instructSet1, instructSet2) {
         console.log(instructSet1);
         console.log(instructSet2);
         this.CoreInstructions = [];
+        this.pcs = [-1, -1]; //pc start
+        this.strings={};
+        for(let i = 0;i<1024;i++){
+            this.memory[i]=0;
+        }
+        this.freeMemInitial = 0;
         this.CoreInstructions[0] = instructSet1;
         this.CoreInstructions[1] = instructSet2;
         this.set(0);
@@ -23,88 +34,120 @@ class Processor {
         // var queue = [];
     }
     parseDirective(directive) {
-        switch (directive[0].split('.')[1]) {
-            
-            case "zero":
-            let size = parseInt(directive[1]);
-            if(this.freeMemInitial+size < this.freeMemfinal)
-            {
-                let arr = new Array(size).fill(0);
-                this.memory.splice(freeMemInitial, arr.length, ...arr);
-                this.freeMemInitial += size;
-            }
-            break;
-
-            case "word": //handles .word 0x1000,0x1111, 0x101,...
-            let i=1; 
-            while(i<directive.length)
-            {
-                this.memory[this.freeMemInitial]= parseInt(directive[i],16);
-                this.freeMemInitial++;
-                i++;
-            }
-            break;
-          
-            default:
-            
-          break;
-        }
+        console.log(directive[0].split('.')[1]);
+        console.log("................");
+        
     }
+    // arr: .zero 80
+    // to parse .word etc... base: .word 0x1000000.
+    // arr: is handled in porcessor.js
     set(x) {// labels handelled
         /*
-            base: .word 0x10000000
+            base: 
             arr: .zero 80 -> done!!!
             str:  .string " "
             str2:  .string "Before sorting : \n"
             str3:  .string "After sorting : \n"
             str1: .string "\n"
-        */ 
-        let labels = {};
+        */
         for (let i = 0; i < this.CoreInstructions[x].length; i++) {
-            
-            if (this.CoreInstructions[x][i].includes(':')) {
-                
-                var instruct = this.#split(this.CoreInstructions[x][i]);
-                
-                let k = instruct[0].split(':')[0];
-                
-                if (k.toLowerCase().includes('base:')) {//check if its a base instruction....
-                
-                    instruct = this.#split(this.CoreInstructions[x][i]);
-                    labels[k] =i;
-                    this.freeMemInitial= parseInt(instruct[2],16);
-                }
-                else if(instruct[1])//check if later half exists...
-                {
-                    if (instruct[1]==".string") {
-                        var string = "";
-                        let j=0;
-                        while(j<instruct[2].length)
-                        {
-                            if(instruct[2][j]=="\"")
-                            {
-                                j++;
-                                continue;
-                            }
-                            string+=instruct[2][j];
-                        }
-                        
-                    }
-                    else if(instruct[1].includes('.'))
-                    {
-                        this.parseDirective(instruct.slice(1));// sends part of array starting from 1st index till end to parseDirectives.
-                    }
-                }
-                this.CoreInstructions[x][i] = k;
-                labels[k] = i;
-                console.log(`Instruction parsed is now ${this.CoreInstructions[x][i]} at ${labels[k]}`);
-            }
-            else if(this.CoreInstructions[x][i].includes('.word'))//handles .word written directly....
+
+            if(this.CoreInstructions[x][i].includes('#'))
             {
-                this.parseDirective(this.#split(this.CoreInstructions[x][i]));
+                this.CoreInstructions[x][i]= this.CoreInstructions[x][i].split('#')[0];
+            }
+            
+            if (this.CoreInstructions[x][i].includes('.text') && this.pcs[x] == -1) {
+                this.pcs[x] = i + 1;
             }
         }
-        this.cores[x].labels = labels;
+        if(this.pcs[x]==-1)
+        {
+            this.pcs[x]=0;
+        }
+
+        for (let i = this.pcs[x]; i < this.CoreInstructions[x].length; i++){
+            
+            if (this.CoreInstructions[x][i].includes(':') && this.pcs[x] != -1) {
+                // var instruct = this.#split(this.CoreInstructions[x][i]);
+
+                let k = this.CoreInstructions[x][i].split(':')[0].replaceAll(" ", "");
+                
+                this.CoreInstructions[x][i] = k;
+                this.cores[x].labels[k] = i;
+                console.log(`Instruction parsed is now ${this.CoreInstructions[x][i]} at ${this.cores[x].labels[k]}`);
+            }
+        }
+               
+        // for .data
+        
+        for (let i = 0; i < this.pcs[x]; i++) {
+            let instruct = this.CoreInstructions[x][i];
+            let label = "+";
+            // 003 no instruct[0]
+            if (!instruct){
+                continue;
+            }
+            
+            if(instruct.includes(':')) {//check if its a base instruction....
+                label = instruct.split(':')[0].replaceAll(" ", '');
+                 
+                instruct = instruct.split(':')[1];
+            }
+            
+            instruct = this.#split(instruct.replaceAll('\r', ''));
+            //check if later half exists...
+            console.log("instruct[0].split('.')[1]---------------");
+            if (instruct[0] && instruct[0].replaceAll(".", "") === "string") {
+                string = instruct[1].replaceAll('\"', "");
+                console.log("q3jbfeq3hj ecbfjq3h becfjbeqwlucfb");
+                console.log(string);
+                this.strings[label] = string;
+            }
+            else if (instruct[0] && instruct[0].includes('.')) {
+
+                console.log(instruct[0].split('.')[1]);
+                
+                switch (instruct[0].split('.')[1]) {
+
+                    case "zero":
+                        let size = parseInt(instruct[1]);  
+                        if (this.freeMemInitial + size < this.freeMemfinal) {
+                            let arr = new Array(size).fill(0);
+                            this.memory.splice(freeMemInitial, arr.length, ...arr);
+                            this.freeMemInitial += size;
+                        }
+                        break;
+        
+                    case "word": 
+                        let i = 1;
+                        // 003 kept label inside if
+                        if(label!="+" && instruct[1])
+                        {
+                            this.cores[x].labels[label]=parseInt(instruct[1]);
+                        }
+
+                        while (i < instruct.length) {
+                            if(instruct[i].includes('0x')){
+                                this.memory[this.freeMemInitial] = parseInt(instruct[i].split('0x')[1], 16);
+                            }else{
+                                this.memory[this.freeMemInitial] = parseInt(instruct[i], 10);
+
+                            }
+                            
+                            this.freeMemInitial+=1;
+                            i++;
+                        }
+                        
+                        break;
+        
+                    default:
+        
+                        break;
+                }
+            }
+
+        }
     }
     run() {
         // if statement for string end for both
@@ -117,43 +160,45 @@ class Processor {
 
     }
     play() {
-        this.cores[0].pc=0;
+        
+        this.cores[0].pc = 0;
         this.cores[1].pc = 0;
         while (this.cores[0].pc < this.CoreInstructions[0].length || this.cores[1].pc < this.CoreInstructions[1].length) {
             console.log(`the reg 2  is ${this.cores[0].register[2]} & 1 is is ${this.cores[0].register[1]}\n`);
-            this.run(); 
+            this.run();
         }
+        console.log(this.memory);
     }
-    static setBus(value, address) {
-        if (address) {
+    setmem(value, address){
             this.memory[address] = value;
-        }
     }
-    static getBus(address) {
-        if (address) {
-            return this.memory[address];
-        }
+    getmem(address){
+        return this.memory[address];
     }
+    
+
+    //  remove "," " " and return array of instructions  
     #split(s) {
         let i = 0;
         let a = [];
         let j = 0;
         while (i < s.length) {
-          let s1 = "";
-          while (s.charAt(i) !== " " && s.charAt(i) !== "," && i < s.length) {
-            s1 += s[i++];
-          }
-          if (s1 === " " || s1 === "," || s1 === "") {
+            let s1 = "";
+            while (s.charAt(i) !== " " && s.charAt(i) !== "," && i < s.length) {
+                s1 += s[i++];
+            }
+            // extra " " and ","
+            if (s1 === "") {
+                i++;
+                continue;
+            }
+            console.log(s1);
+            a[j++] = s1;
             i++;
-            continue;
-          }
-          console.log(s1);
-          a[j++] = s1;
-          i++;
         }
         console.log(a);
         return a;
-      }
+    }
 }
 
 // export default Processor;
@@ -163,6 +208,7 @@ const p = new Processor();
 console.log("ashish hello");
 const run = document.querySelector(".Run");
 const step = document.querySelector(".Step_fd");
+
 function initialization() {
     const a1 = getValue1();
     const a2 = getValue2();
@@ -175,7 +221,6 @@ function initialization() {
 
 
 const reset = document.querySelector(".reset");
-// const reset = document.getElementById("restart");
 
 reset.addEventListener('click', () => {
     for (let i = 0; i < 31; i++) {
@@ -184,6 +229,7 @@ reset.addEventListener('click', () => {
         reg1Update.value = "0";
         reg2Update.value = "0";
     }
+    initialization();
 })
 
 run.addEventListener('click', function Fun1() {
@@ -196,6 +242,32 @@ step.addEventListener('click', function Fun1() {
     initialization();
     p.run();
 })
+export function setBus(address, value) {  
+    console.log(address);
+    console.log(value);
+    p.setmem(value, address/4);
+}
+export function getBus(address) {
+    
+    console.log(address);
+    console.log(p.getmem(address));
+    
+    return p.getmem(address);
+    
+}
+export function getHexMem(address, byte) {
+    // Convert the decimal number to hexadecimal
+    let num = p.getmem(address);
+    
+    var hexString = num.toString(16);
 
+    // Pad with leading zeros to ensure 32 bits
+    while (hexString.length < 8) {
+        hexString = '0' + hexString;
+    }
+    hexString = hexString;
+
+    return hexString.charAt(2*byte) + hexString.charAt(2*byte + 1);
+}
 export default Processor;
 // p.run();
