@@ -97,10 +97,9 @@ class Processor {
             
             instruct = this.#split(instruct.replaceAll('\r', ''));
             //check if later half exists...
-            console.log("instruct[0].split('.')[1]---------------");
+    
             if (instruct[0] && instruct[0].replaceAll(".", "") === "string") {
                 string = instruct[1].replaceAll('\"', "");
-                console.log("q3jbfeq3hj ecbfjq3h becfjbeqwlucfb");
                 console.log(string);
                 this.strings[label] = string;
             }
@@ -111,10 +110,17 @@ class Processor {
                 switch (instruct[0].split('.')[1]) {
 
                     case "zero":
+                        if(label!="+")
+                        {
+                            this.cores[x].labels[label]=parseInt(this.freeMemInitial);
+                        }
                         let size = parseInt(instruct[1]);  
                         if (this.freeMemInitial + size < this.freeMemfinal) {
-                            let arr = new Array(size).fill(0);
-                            this.memory.splice(freeMemInitial, arr.length, ...arr);
+                            let array = [];
+                            for(let i = 0;i<size;i++){
+                                array.push(0);
+                            }
+                            this.memory.splice(this.freeMemInitial, array.length, ...array);
                             this.freeMemInitial += size;
                         }
                         break;
@@ -122,9 +128,9 @@ class Processor {
                     case "word": 
                         let i = 1;
                         // 003 kept label inside if
-                        if(label!="+" && instruct[1])
+                        if(label!="+")
                         {
-                            this.cores[x].labels[label]=parseInt(instruct[1]);
+                            this.cores[x].labels[label]=parseInt(this.freeMemInitial);
                         }
 
                         while (i < instruct.length) {
@@ -132,9 +138,7 @@ class Processor {
                                 this.memory[this.freeMemInitial] = parseInt(instruct[i].split('0x')[1], 16);
                             }else{
                                 this.memory[this.freeMemInitial] = parseInt(instruct[i], 10);
-
                             }
-                            
                             this.freeMemInitial+=1;
                             i++;
                         }
@@ -245,7 +249,7 @@ step.addEventListener('click', function Fun1() {
 export function setBus(address, value) {  
     console.log(address);
     console.log(value);
-    p.setmem(value, address/4);
+    p.setmem(value, address);
 }
 export function getBus(address) {
     

@@ -82,7 +82,7 @@ class Instruction {
         // Assuming format is lw x1 0(x2)
         if(components[2].includes("(")){
           let a1 = components[2].split("(");
-          this.imd = parseInt(a1[0])/4;
+          this.imd = parseInt(a1[0]);
           this.rs1 = this.#valueof(a1[1].replace(')', ''));
         }else{
           this.label = components[2];

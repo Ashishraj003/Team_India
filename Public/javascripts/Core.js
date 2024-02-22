@@ -123,10 +123,9 @@ class Core {
     }
     lw(instructionObj) {
         //lw x1 4(x2) rd -> x1, rs1 -> x2 , imd ->4
-        debugger;
         if(instructionObj.imd !=undefined){
-            let val =this.register[instructionObj.rs1]/4 + instructionObj.imd;
-            console.log(this.register[instructionObj.rs1]/4 + instructionObj.imd);
+            let val =this.register[instructionObj.rs1]/4 + instructionObj.imd/4;
+            console.log(this.register[instructionObj.rs1]/4 + instructionObj.imd/4);
             console.log(instructionObj.rd);
             console.log("1234567890-");
             
@@ -134,16 +133,15 @@ class Core {
             console.log(this.register[instructionObj.rd]);
         }else{
             
-            this.register[instructionObj.rd] = this.labels[instructionObj.label];
+            this.register[instructionObj.rd] = getBus(this.labels[instructionObj.label]);
         }
     }
     sw(instructionObj) {
-        //lw x1 0(x2) rd -> x1, rs1 -> x2 , imd ->0
-        let val = this.register[instructionObj.rs1] + instructionObj.imd;
+        //sw x1 0(x2) rs1 -> x1, rs2 -> x2 , imd ->0
+        let val = this.register[instructionObj.rs1];
         // this.register[instructionObj.rs2 + instructionObj.imd] = this.register[instructionObj.rs1];
         console.log(instructionObj.rs1);
-        setBus(this.register[instructionObj.rs2] + instructionObj.imd, val);
-
+        setBus(this.register[instructionObj.rs2]/4 + instructionObj.imd/4, val);
     }
     li(instructionObj) {
         this.register[rd] = instructionObj.imd;
@@ -193,10 +191,9 @@ class Core {
         this.register[instructionObj.rd] = instructionObj.imd;
     }
     jal(instructionObj) {
-        /*this.rd = this.#valueof(components[2]);
-        this.rs1 = this.#valueof(components[1]);
-        this.offset = parseInt(components[3]); */
-        // this.register[instructionObj.rd] = 
+        debugger;
+        this.register[instructionObj.rs1] = this.pc + 1;//as insturctions are stored as arrays.... so pc + 1 is req
+        this.pc = this.labels[instructionObj.label];
     }
     j(instructionObj) {
         this.pc= this.labels[instructionObj.label];
