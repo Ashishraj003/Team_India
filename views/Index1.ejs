@@ -102,7 +102,7 @@
                         <% for(let i=0;i<=31;i++) { %>
                           <tr>
                             <td><button class="b1" id="reg1<%= i %>">x<%= i %></button></td>
-                            <td><input type="text" id="reg1Text<%= i %>" value="0"></td>
+                            <td><input type="text" id="reg1Text<%= i %>" value="0" readonly></td>
                           </tr>
                           <% } %>
                       </table>
@@ -110,12 +110,12 @@
                       <table class="register2-table" cellspacing="0" id="reg2_table" style="display : none">
                         <tr>
                           <td class="t1"><button class="b1" id="reg_heading">Name</button></td>
-                          <td class="t1"><input type="text" value="Value" id="val_heading"></td>
+                          <td class="t1"><input type="text" value="Value" id="val_heading" ></td>
                         </tr>
                         <% for(let i=0;i<=31;i++) { %>
                           <tr>
                             <td><button class="b1" id="reg2<%= i %>">y<%= i %></button></td>
-                            <td><input type="text" id="reg2Text<%= i %>" value="0"></td>
+                            <td><input type="text" id="reg2Text<%= i %>" value="0" readonly></td>
                           </tr>
                           <% } %>
                       </table>

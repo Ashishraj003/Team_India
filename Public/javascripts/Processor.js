@@ -1,5 +1,5 @@
 import Core from "./Core.js"
-import { getValue1, getValue2 } from "./editor.js";
+import { getValue1, getValue2, ChangeColor1, ChangeColor2, EnableEdit, DisableEdit } from "./editor.js";
 
 
 class Processor {
@@ -29,6 +29,8 @@ class Processor {
         this.CoreInstructions[1] = instructSet2;
         this.set(0);
         this.set(1);
+        this.cores[0].pc = this.pcs[0];
+        this.cores[1].pc = this.pcs[1];
         console.log(instructSet2);
         console.log("----------------------");
         // var queue = [];
@@ -155,9 +157,16 @@ class Processor {
     }
     run() {
         // if statement for string end for both
+        if(!this.CoreInstructions){
+            initialization();
+        }
+        // setTimeout(1000);s
+        ChangeColor1(this.cores[0].pc);
+
         if (this.cores[0].pc < this.CoreInstructions[0].length) {
             this.cores[0].execute(this.CoreInstructions[0][this.cores[0].pc].replaceAll('\r', ''));
         }
+        ChangeColor2(this.cores[1].pc);
         if (this.cores[1].pc < this.CoreInstructions[1].length) {
             this.cores[1].execute(this.CoreInstructions[1][this.cores[1].pc].replaceAll('\r', ''));
         }
@@ -165,11 +174,16 @@ class Processor {
     }
     play() {
         
-        this.cores[0].pc = 0;
-        this.cores[1].pc = 0;
+        this.cores[0].pc = this.pcs[0];
+        this.cores[1].pc = this.pcs[1];
+        let cnt = 0;
         while (this.cores[0].pc < this.CoreInstructions[0].length || this.cores[1].pc < this.CoreInstructions[1].length) {
             console.log(`the reg 2  is ${this.cores[0].register[2]} & 1 is is ${this.cores[0].register[1]}\n`);
             this.run();
+            if(cnt>200){
+                break;
+            }
+            cnt++;
         }
         console.log(this.memory);
     }
@@ -213,6 +227,7 @@ console.log("ashish hello");
 const run = document.querySelector(".Run");
 const step = document.querySelector(".Step_fd");
 
+
 function initialization() {
     const a1 = getValue1();
     const a2 = getValue2();
@@ -225,7 +240,11 @@ function initialization() {
 
 
 const reset = document.querySelector(".reset");
-
+const edt=document.querySelector(".editBtn");
+edt.addEventListener("click",()=>{
+    initialization();
+    EnableEdit();
+});
 reset.addEventListener('click', () => {
     for (let i = 0; i < 31; i++) {
         const reg1Update = document.getElementById(`reg1Text${i}`);
@@ -234,18 +253,21 @@ reset.addEventListener('click', () => {
         reg2Update.value = "0";
     }
     initialization();
+    EnableEdit();
 })
 
 run.addEventListener('click', function Fun1() {
     console.log("buff");
     initialization();
     p.play();
+    initialization();
 })
 
 step.addEventListener('click', function Fun1() {
-    initialization();
+    DisableEdit();
     p.run();
 })
+
 export function setBus(address, value) {  
     console.log(address);
     console.log(value);

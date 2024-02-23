@@ -117,7 +117,7 @@ class Instruction {
         this.offset = parseInt(components[3]);
         break;
       case "jal":
-        this.rs1 = this.#valueof(components[1]);
+        this.rd = this.#valueof(components[1]);
         this.label = components[2];
         break;
 
@@ -125,7 +125,7 @@ class Instruction {
         this.label = components[1];
         break;
       case "jr":
-        this.rs1 = this.#valueof(components[1]);
+        this.rd = this.#valueof(components[1]);
         break;
       // Add more cases as needed for other instructions
       default:

@@ -127,8 +127,6 @@ class Core {
             let val =this.register[instructionObj.rs1]/4 + instructionObj.imd/4;
             console.log(this.register[instructionObj.rs1]/4 + instructionObj.imd/4);
             console.log(instructionObj.rd);
-            console.log("1234567890-");
-            
             this.register[instructionObj.rd] = getBus(val);
             console.log(this.register[instructionObj.rd]);
         }else{
@@ -185,19 +183,23 @@ class Core {
         }
     }
     
-    li(instructionObj) {
-        // this.rd = this.#valueof(components[1]);
-        // this.imd = parseInt(components[2]);
-        this.register[instructionObj.rd] = instructionObj.imd;
-    }
+    // li(instructionObj) {
+    //     // this.rd = this.#valueof(components[1]);
+    //     // this.im d = parseInt(components[2]);
+    //     this.register[instructionObj.rd] = instructionObj.imd;
+    // }
     jal(instructionObj) {
-        debugger;
-        this.register[instructionObj.rs1] = this.pc + 1;//as insturctions are stored as arrays.... so pc + 1 is req
+
+        this.register[instructionObj.rd] = this.pc + 1;//as insturctions are stored as arrays.... so pc + 1 is req
         this.pc = this.labels[instructionObj.label];
     }
     j(instructionObj) {
         this.pc= this.labels[instructionObj.label];
     }
+    jr(instructionObj) {
+        this.pc= this.labels[instructionObj.label];
+    }
+    
 }
 
 export default Core;

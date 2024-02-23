@@ -441,3 +441,26 @@ table {
   padding: 10px;
   border-bottom: 1px solid #ccc;
 } */
+
+
+@keyframes fade {
+  0% {
+    background-color: rgb(165, 42, 42);
+  }
+
+  50% {
+    background-color: rgba(165, 42, 42, 0.3);
+  }
+
+  100% {
+    background-color: brown;
+  }
+}
+
+.my-custom-class {
+  animation: fade 4s infinite;
+  /* Adjust the duration and iteration count as needed */
+}
+.hidden{
+  display: none;
+}
