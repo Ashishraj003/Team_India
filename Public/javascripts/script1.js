@@ -9,7 +9,7 @@ function myFunction() {
   }
 }
 
-// var editor = CodeMirror.fromTextArea(document.getElementById('e1'), {
+//var editor = CodeMirror.fromTextArea(document.getElementById('e1'), {
 //     lineNumbers: true,
 //     mode: 'text/x-perl',
 //     matchBrackets: true,

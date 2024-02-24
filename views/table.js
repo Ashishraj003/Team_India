@@ -35,8 +35,7 @@
         table.setAttribute('id', "reg1_table");
         table.style.display = "block";
         li.appendChild(table);
-
-        let head_tr = document.createElement('tr');
+        let head_tr =document.createElement('tr');
         table.appendChild(head_tr);
 
         let td1 = document.createElement('td');

@@ -6,7 +6,7 @@ const editor = document.querySelector("#editor_id");
 const cache = document.querySelector("#cache_id");
 const memory = document.querySelector("#memory_id");
 
-
+//
 // page switching
 button1.addEventListener('click', function () {
     // location.href = "/";

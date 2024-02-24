@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
     res.render('Index1.ejs');
 })
 
-// app.post('/cache', (req, res) => {
+// app.post('/cach', (req, res) => {
 //     res.render('cache');
 // })
 
@@ -28,5 +28,5 @@ app.get('/', (req, res) => {
 
 
 app.listen(3000, () => {
-    console.log("ON PORT 3000!")
+    console.log("ON PORT 3000!");
 })

@@ -7,7 +7,7 @@
 //
 // desc: demonstrates textarea line numbers using canvas paint
 // auth: nikola bozovic <nigerija@gmail>
-//
+// ss
 var TextAreaLineNumbersWithCanvas = function () {
   var div = document.getElementById("wrapper2");
   var cssTable =

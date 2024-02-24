@@ -1,6 +1,6 @@
 import Core from "./Core.js"
 import { getValue1, getValue2, ChangeColor1, ChangeColor2, EnableEdit, DisableEdit } from "./editor.js";
-
+//
 
 class Processor {
     constructor() {

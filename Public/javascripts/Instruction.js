@@ -6,7 +6,7 @@ class Instruction {
   // let rs2;
   // let rd;
   // let offset;
-  // type
+  // typ
   // imd
 
   constructor(instruct) {

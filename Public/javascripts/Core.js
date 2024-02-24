@@ -7,7 +7,7 @@ class Core {
         this.flag = num;
         this.labels = {};
     }
-    
+    //
     execute(instruction) {
         const object = new Instruction(instruction);
         console.log(object.type);

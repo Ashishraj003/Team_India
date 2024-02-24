@@ -15,7 +15,7 @@ Added functions to get value from editor 1 and editor 2 and stored them in "Inst
 **Decisions** : Debugging core class, and adding memory ,
 adding styles to the memory.. 
 Veerain and Anuj did Debugging of Core and Processor.
-and Ashish was fixing front end display...
+and Ashish was fixing front end display..
 added registers to each core
 added registers to front end and button to switch between core 1 register and core 2 register.
 
