@@ -1,0 +1,491 @@
+.pagination {
+  margin-top: 0.625rem;
+  display: grid;
+  row-gap: 0.5rem;
+  grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+}
+body {
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+.pagination a {
+  display: block;
+  padding: 0.3125rem 0.625rem;
+  margin-right: 0.3125rem;
+  background-color: #f2f2f2;
+  text-decoration: none;
+  color: #333;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.1875rem;
+  /* column-count: 16; */
+}
+
+.pagination a:hover {
+  background-color: #ddd;
+}
+
+
+
+
+
+/* chacked */
+.navbar {
+  background-color: brown;
+  height: 3rem;
+}
+
+
+html {
+  /* font-size: 1vw; */
+  width: 100vw;
+  /* 1% of the viewport width */
+}
+
+body {
+  background-color: black;
+  height: 100%;
+  margin: 0rem;
+  padding: 0rem;
+}
+
+.Top {
+  background-color: rgb(46, 46, 46);
+  margin-top: 3rem;
+}
+
+.reset {
+  margin-right: 1rem;
+}
+
+.Run {
+  margin-left: 1rem;
+}
+
+.Top_buttons {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.Top_buttons:first-child {
+  margin-left: 2rem;
+}
+
+.main_container {
+  /* height: 85.5vh; */
+  /* height: 5.34375rem; */
+  display: flex;
+}
+.setting_header{
+  height: 10%;
+}
+
+.side_bar {
+  background-color: rgb(46, 46, 46);
+  height: 100%;
+  width: 7%;
+  padding: 0rem;
+}
+
+.container12 {
+  height: 100%;
+  margin: 0rem;
+  width: 100%;
+  display: flex;
+}
+
+.holder {
+  height: 100%;
+  width: 100%;
+  margin: 0rem;
+}
+
+.side_button {
+  height: 4rem;
+  width: 100%;
+  color: white;
+  background-color: rgb(46, 46, 46);
+  display: block;
+}
+
+.side_button:hover {
+  height: 4rem;
+  width: 100%;
+  color: white;
+  background-color: #a4a2a2;
+  display: block;
+}
+
+
+.text_holder {
+  display: flex;
+}
+
+
+.ace_cobalt .ace_register {
+  color: #ff0000; /* Change this to the desired color using a valid CSS color value */
+}
+
+.ace_cobalt .ace_imediate {
+  color: #00ff00; /* Change this to the desired color using a valid CSS color value */
+}
+
+
+
+.text {
+  background-color: black;
+  display: flex;
+}
+
+/* Style the tab */
+
+/* Style the buttons inside the tab */
+.btn-group {
+  background-color: #3d3d3d;
+}
+
+.btn-primary {
+  background-color: #a52a2a;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  padding: 0.5rem 1.25rem;
+  margin-left: 0.4375rem;
+  margin-top: 0.1875rem;
+  margin-bottom: 0.1875rem;
+  transition: 0.3s;
+  font-size: 1.0625rem;
+}
+
+/* Change background color of buttons on hover */
+.btn:hover {
+  background-color: #7d1f1f;
+}
+
+
+#mytextarea {
+  width: auto;
+  /* width: 30.375rem; */
+  width: 28.4375rem;
+  height: 29rem;
+  font-size: 0.9375rem;
+  font-family: monospace;
+  line-height: 0.9375rem;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+  resize: both;
+  color: rgb(255, 255, 255);
+  border: 0;
+  background-color: #222;
+  white-space: pre;
+  overflow: auto;
+  border: 0rem;
+  padding-left: 0.625rem;
+}
+
+/* supported only in opera */
+#mytextarea {
+  scrollbar-arrow-color: #ee8;
+  scrollbar-base-color: #444;
+  scrollbar-track-color: #fdfdfd;
+  scrollbar-face-color: #444;
+  /* outer light */
+  scrollbar-3dlight-color: #444;
+  /* inner light */
+  scrollbar-highlight-color: #666;
+  /* outer dark */
+  scrollbar-darkshadow-color: #444;
+  /* inner dark */
+  scrollbar-shadow-color: #222;
+}
+
+#mytextarea2 {
+  width: auto;
+  /* width: 30.375rem; */
+  width: 28.4375rem;
+
+  height: 29rem;
+  font-size: 0.9375rem;
+  font-family: monospace;
+  line-height: 0.9375rem;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+  resize: both;
+  color: rgb(255, 255, 255);
+  border: 0;
+  background-color: #222;
+  white-space: pre;
+  overflow: auto;
+  border: 0px;
+  padding-left: 0.625rem;
+}
+
+ul {
+  padding-left: 0rem;
+}
+
+/* supported only in opera */
+#mytextarea2 {
+  scrollbar-arrow-color: #ee8;
+  scrollbar-base-color: #444;
+  scrollbar-track-color: #fdfdfd;
+  scrollbar-face-color: #444;
+  /* outer light */
+  scrollbar-3dlight-color: #444;
+  /* inner light */
+  scrollbar-highlight-color: #666;
+  /* outer dark */
+  scrollbar-darkshadow-color: #444;
+  /* inner dark */
+  scrollbar-shadow-color: #222;
+}
+
+
+.text1 {
+  background-color: #121212;
+}
+
+.register1 {
+  width: 50%;
+  background-color: rgb(186, 186, 189);
+}
+
+.reg_header {
+  /* position: fixed; */
+  height: 22.5rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.Name {
+  font-size: 1.5rem;
+}
+
+.button_holder {
+  display: flex;
+}
+
+.name1 {
+  height: 3rem;
+  padding-right: 1.6rem;
+  border-right: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
+}
+
+.Value {
+  padding-left: 1rem;
+  font-size: 1.5rem;
+}
+
+.value1 {
+  width: 100%;
+  height: 3rem;
+  border-right: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
+}
+
+.f1 {
+  display: inline;
+}
+
+.b1 {
+
+  color: white;
+  /* White text */
+  cursor: pointer;
+  /* Pointer/hand icon */
+  display: block;
+  background-color: #a52a2a;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 1.0625rem;
+  /* border: none; */
+
+
+  /* me2 */
+  padding: 0rem;
+  width: 3.23669rem;
+  height: 1.875rem;
+  border: 0.0625rem solid black;
+}
+
+td {
+  padding: 0rem;
+
+}
+
+
+
+
+
+/* Change background color of buttons on hover */
+.b1:hover {
+  background-color: #7d1f1f;
+}
+
+
+table input {
+  font-weight: 500;
+  font-size: 1rem;
+  color: blue;
+  /* color: rgb(44, 16, 3); */
+  text-align: left;
+  /* background-color: #d3bdbd; */
+  background-color: #e7e4e4;
+  border: 0rem;
+  width: 11.5831rem;
+  height: 1.875rem;
+  border: 0.0625rem solid black;
+}
+
+.register {
+  right: 0;
+  width: 20%;
+
+}
+
+/* register heading  */
+#reg_heading {
+  
+  text-align: center;
+  background-color: #efc6c6;
+  color: #7d1f1f;
+  font-weight: 500;
+}
+
+#val_heading {
+  text-align: center;
+  color: #7d1f1f;
+  background-color: #efc6c6;
+}
+
+table {
+  text-align: left;
+  position: relative;
+}
+
+
+
+
+.t1 {
+  background: white;
+  position: sticky;
+  top: 0;
+}
+
+
+.t2 {
+  background: white;
+  position: sticky;
+  top: 0;
+}
+
+
+
+
+
+
+/* memory styles */
+.col_name1 {
+  text-align: center;
+  font-weight: bold;
+  color: rgb(44, 16, 3);
+  background-color: #efc6c6;
+
+}
+
+.col_name {
+  text-align: center;
+  font-weight: normal;
+  color: rgb(44, 16, 3);
+}
+
+/* memory style end */
+
+
+
+
+
+
+
+
+#data-container {
+  height: 22.5rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+}
+
+
+
+
+@keyframes fade {
+  0% {
+    background-color: rgb(165, 42, 42);
+  }
+
+  50% {
+    background-color: rgba(165, 42, 42, 0.3);
+  }
+
+  100% {
+    background-color: brown;
+  }
+}
+
+.my-custom-class {
+  animation: fade 4s infinite;
+  /* Adjust the duration and iteration count as needed */
+}
+
+.hidden {
+  display: none;
+}
+
+
+
+
+
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: rgb(165, 42, 42);
+  min-width: 10rem;
+  box-shadow: 0rem 0.5rem 1rem 0rem rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+/**/
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: white;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: #7d1f1f;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}

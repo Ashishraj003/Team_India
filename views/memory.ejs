@@ -1,0 +1,60 @@
+<%- include('partials/header') %>
+    <!--Custom CSS-->
+    <link href="/css/style_memory.css" rel="stylesheet" type="text/css">
+
+    </head>
+
+    <body>
+
+        <!-- fist header for file edit buttons -->
+        <nav id="mainNavbar" class="navbar navbar-dark  navbar-expand-md py-0 fixed-top">
+            <a href="#" class="navbar-brand">SIMULATOR</a>
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#navLinks"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navLinks">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="" class="nav-link"> FILE</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link"> EDIT</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link">HELP</a>
+                    </li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- for un buttons and commands -->
+        <section class="Top">
+            <div class="Top_buttons">
+                <!-- Step forward -->
+                <button class="reset">&#8635</button>
+                <button class="Step_fd">&#128896;</button>
+                <!-- Step backward -->
+                <button class="Step_bk">&#128898;</button>
+                <button class="Run">Run</button>
+            </div>
+        </section>
+
+        <div class="main_container">
+            <div class="container12">
+                <div class="side_bar ">
+                    <button id="side_but1" class="side_button">Editor</button>
+                    <button id="side_but2" class="side_button">Cache</button>
+                    <button id="side_but3" class="side_button">Memory</button>
+                </div>
+                <div class="holder">
+
+
+                </div>
+            </div>
+        </div>
+        <script src="/javascripts/sidebar.js"></script>
+    </body>
+
+    </html>
