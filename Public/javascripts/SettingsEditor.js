@@ -1,5 +1,5 @@
-import Instruction from "./Instruction.js";
 
+import {latencyMap} from "./Instruction.js";
 const closebtn = document.querySelector(".close_set");
 const closeOut = document.querySelector(".setOut");
 const showbtn = document.querySelector(".show_set");
@@ -15,8 +15,7 @@ closebtn.addEventListener("click", ()=>{
 showbtn.addEventListener("click", ()=>{
     setdiv.style.display = "block";
 });
-latency_select.onchange = function(){
+letval.onchange = function(){
     debugger;
-    // Instruction.latencyMap[latency_select.innerText] = letval.innerText;
-    // console.log(Instruction.latencyMap);
+    latencyMap[latency_select.value] = letval.value;
 };

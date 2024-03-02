@@ -1,46 +1,51 @@
 "use strict";
+export const latencyMap ={};
+const alias = {
+  'ra': '1',
+  'sp': '2',
+  'gp': '3',
+  'tp': '4',
+  't0': '5',
+  't1': '6',
+  't2': '7',
+  's0': '8',
+  's1': '9',
+  'a0': '10',
+  'a1': '11',
+  'a2': '12',
+  'a3': '13',
+  'a4': '14',
+  'a5': '15',
+  'a6': '16',
+  'a7': '17',
+  's2': '18',
+  's3': '19',
+  's4': '20',
+  's5': '21',
+  's6': '22',
+  's7': '23',
+  's8': '24',
+  's9': '25',
+  's1': '26',
+  's1': '27',
+  't3': '28',
+  't4': '29',
+  't5': '30',
+  't6': '31'
+};
+
 
 class Instruction {
-  latencyMap ={};
+  
   constructor(instruct) {
-    this.alias = {};
+    
     
     // 003 repeted code bad practice
 
     let components = this.#split(instruct);
     this.type = components[0];
 
-    this.alias['ra'] = 'x1';
-    this.alias['sp'] = 'x2';
-    this.alias['gp'] = 'x3';
-    this.alias['tp'] = 'x4';
-    this.alias['t0'] = 'x5';
-    this.alias['t1'] = 'x6';
-    this.alias['t2'] = 'x7';
-    this.alias['s0'] = 'x8';
-    this.alias['s1'] = 'x9';
-    this.alias['a0'] = 'x10';
-    this.alias['a1'] = 'x11';
-    this.alias['a2'] = 'x12';
-    this.alias['a3'] = 'x13';
-    this.alias['a4'] = 'x14';
-    this.alias['a5'] = 'x15';
-    this.alias['a6'] = 'x16';
-    this.alias['a7'] = 'x17';
-    this.alias['s2'] = 'x18';
-    this.alias['s3'] = 'x19';
-    this.alias['s4'] = 'x20';
-    this.alias['s5'] = 'x21';
-    this.alias['s6'] = 'x22';
-    this.alias['s7'] = 'x23';
-    this.alias['s8'] = 'x24';
-    this.alias['s9'] = 'x25';
-    this.alias['s1'] = 'x26';
-    this.alias['s1'] = 'x27';
-    this.alias['t3'] = 'x28';
-    this.alias['t4'] = 'x29';
-    this.alias['t5'] = 'x30';
-    this.alias['t6'] = 'x31';
+    
 
 
     // if (components[0]) {
@@ -56,6 +61,9 @@ class Instruction {
     //   }
     // }
     this.latency = 1;// map[type]
+    if(latencyMap[this.type]!=undefined){
+      this.latency = latencyMap[this.type];
+    }
     this.rsval1=0;
     this.rsval2=0;
     switch (this.type) {
@@ -153,7 +161,7 @@ class Instruction {
     {
       return parseInt(s.replace('x', ''));
     }
-    return parseInt((this.alias[s]).replace('x', ''));
+    return parseInt(alias[s]);
   }
 }
 

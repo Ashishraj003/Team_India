@@ -109,25 +109,46 @@ function update() {
 }
 
 const run = document.querySelector(".Run");
-const parent1 = document.getElementById("mytextarea");
-edit1.onscroll= function(){
+const pscroller1 = document.getElementById("mytextarea").querySelector(".ace_scrollbar");
+const pscroller2 = document.getElementById("mytextarea2").querySelector(".ace_scrollbar");
+const lasts = [0, 0];
+pscroller1.addEventListener("scroll", ()=>{
+ 
     debugger;
-    console.log("asdf");
+    const parent = document.getElementById("mytextarea").querySelector(".ace_text-layer");
     var ele = document.getElementById("mytextarea").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
     var first_ele = ele.children[0].innerText - 1;
-    if (pc < first_ele) {
+    if (lasts[1] < first_ele) {
         return;
     }
-    var pc2 = pc - parseInt(first_ele)
+    var pc2 = lasts[1] - parseInt(first_ele)
 
-    if (parent)
+    if (parent && parent.children)
         var child = parent.children[pc2];
     if (child)
         child.classList.add("my-custom-class");
     
-};
+});
+pscroller2.addEventListener("scroll", ()=>{
+ 
+    debugger;
+    const parent = document.getElementById("mytextarea2").querySelector(".ace_text-layer");
+    var ele = document.getElementById("mytextarea2").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
+    var first_ele = ele.children[0].innerText - 1;
+    if (lasts[2] < first_ele) {
+        return;
+    }
+    var pc2 = lasts[2] - parseInt(first_ele)
+
+    if (parent && parent.children)
+        var child = parent.children[pc2];
+    if (child)
+        child.classList.add("my-custom-class");
+    
+});
 export function ChangeColor(pc,number)
 {   
+    lasts[number] = pc;
     var previoueEle,parent,ele;
     if(number==1)
     {

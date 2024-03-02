@@ -8,6 +8,7 @@ class Core {
         this.flag = num;
         this.instructions = [];
         this.labels = {};
+        this.forwarding={};
     }
     execute(instruction) {
         if(!this.#writeBack())
@@ -50,20 +51,43 @@ class Core {
     }
     #DecodeRegisterFetch(){
         
+        let reg1=0;
+        let reg2=0;
         if(this.instructions[0]==undefined)
             return true;
+        
+        //this else if is for pipeline forwardings....
+
         if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0)
         {
             return false;
         }
+        else if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0)
+        {
+            if(this.forwarding[this.instructions[0].rs1]!=undefined)
+            {
+                this.instructions[0].rs1 = this.forwarding[this.instructions[0].rs1];
+                reg1++;
+            }
+        }
+        
         if(this.instructions[0].rs2!=undefined && this.Active_reg[this.instructions[0].rs2]!=0)
         {
             return false;
         }
-        if(this.instructions[0].rs1!=undefined){
+        else if(this.instructions[0].rs2!=undefined && this.Active_reg[this.instructions[0].rs2]!=0)
+        {
+            if(this.forwarding[this.instructions[0].rs2]!=undefined)
+            {
+                this.instructions[0].rs2 = this.forwarding[this.instructions[0].rs2];
+                reg2++;
+            }
+        }
+
+        if(this.instructions[0].rs1!=undefined && reg1==0){
             this.instructions[0].rsval1 = this.register[this.instructions[0].rs1];
         }
-        if(this.instructions[0].rs2!=undefined){
+        if(this.instructions[0].rs2!=undefined && reg2==0){
             this.instructions[0].rsval2 = this.register[this.instructions[0].rs2];
         }
         if(this.instructions.length>1){
@@ -163,6 +187,10 @@ class Core {
         else{
             this.instructions.push(this.instructions[1]);
         }
+        if(this.instructions[1]!=undefined && this.instructions[1].valueAfterExecution!=undefined)
+        {
+            this.forwarding[this.instructions[1].rd]=this.instructions[1].valueAfterExecution;
+        }
         this.instructions[1]=undefined;
         return true;
     }
@@ -177,6 +205,7 @@ class Core {
             if(this.instructions[2].type=="lw" )//since we are reading only rs1 we need to check it if its in use or not
             {
                 this.instructions[2].valueAfterExecution = getBus(this.instructions[2].locationOfPull);
+                this.forwarding[this.instructions[2].rd]=this.instructions[2].valueAfterExecution;
             }
             else if(this.instructions[2].type=="sw" )
             {
@@ -192,6 +221,7 @@ class Core {
         else{
             this.instructions.push(this.instructions[2]);
         }
+        
         this.instructions[2]=undefined;
         // return;
         return true;
