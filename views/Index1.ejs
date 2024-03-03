@@ -3,6 +3,21 @@
   </head>
 
   <body>
+    <div class="confetti" style="display: none;">
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+  </div>
     <div class = "settings">
       <div class = "setOut"></div>
       <div class = "set_align">
@@ -55,7 +70,7 @@
     </div>
     <!-- first header for file edit buttons -->
     <nav id="mainNavbar" class="navbar navbar-dark  navbar-expand-md py-0 fixed-top">
-      <a href="#" class="navbar-brand">SIMULATOR</a>
+      <a href="#" class="navbar-brand Simulatorbtn">SIMULATOR</a>
       <button class="navbar-toggler" data-toggle="collapse" data-target="#navLinks" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -80,7 +95,6 @@
           </li>
         </ul>
       </div>
-
     </nav>
 
     <!-- for run buttons and commands -->
@@ -110,6 +124,7 @@
           <button id="side_but1" class="side_button">Editor</button>
           <button id="side_but2" class="side_button">Cache</button>
           <button id="side_but3" class="side_button">Memory</button>
+          <button id="side_but4" class="side_button">Console</button>
         </div>
         <div class="holder" id="editor_id" style="display: block">
 
@@ -233,8 +248,16 @@
           </div>
 
         </div>
-
+        <div id = "console_id" style="display: none;">
+        <div class = "console_holder">
+            <div class="console1_holder">
+                <div id="console1" class = "consoles">Read Only</div>
+          </div>
+          <div class = "console2_holder">
+            <div id="console2" class = "consoles">Read Only</div>
+          </div>
       </div>
+    </div>
     </div>
 
     <script src="/javascripts/register.js"></script>

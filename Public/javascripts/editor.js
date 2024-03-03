@@ -72,6 +72,8 @@ ace.edit(edt2, {
 
 const edit1 = ace.edit(edt1);
 const edit2 = ace.edit(edt2);
+
+edit1.resize(false);
 let last = [-1, -1];
 var p2 = document.getElementById("mytextarea2").querySelector(".ace_text-layer");
 var p1 = document.getElementById("mytextarea").querySelector(".ace_text-layer");
@@ -210,12 +212,12 @@ export function getValue(i){
 }
 
 export function setValue1(code1) {
-    let edit1 = ace.edit(edt1);
+    // let edit1 = ace.edit(edt1);
     edit1.setValue(code1);
 }
 
 export function setValue2(code1) {
-    let edit2 = ace.edit(edt2);
+    // let edit2 = ace.edit(edt2);
     edit2.setValue(code1);
 }
 

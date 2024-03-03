@@ -16,10 +16,6 @@ class Processor {
         this.strings = {};
     }
     init(instructSet1, instructSet2) {
-        // if (debug){
-        //     console.log(instructSet1);
-        //     console.log(instructSet2);
-        // }
         this.CoreInstructions = [];
         this.pcs = [-1, -1]; //pc start execution after .text 
         this.strings = {};
@@ -47,8 +43,9 @@ class Processor {
             str3:  .string "After sorting : \n"
             str1: .string "\n"
         */
+        
         for (let i = 0; i < this.CoreInstructions[x].length; i++) {
-
+            
             if (this.CoreInstructions[x][i].includes('#')) {
                 this.CoreInstructions[x][i] = this.CoreInstructions[x][i].split('#')[0];
             }
@@ -62,13 +59,12 @@ class Processor {
         }
 
         for (let i = this.pcs[x]; i < this.CoreInstructions[x].length; i++) {
-
+            this.CoreInstructions[x][i] = this.CoreInstructions[x][i].replaceAll("  ", " ");
             if (this.CoreInstructions[x][i].includes(':') && this.pcs[x] != -1) {
                 // var instruct = this.#split(this.CoreInstructions[x][i]);
-
-                let k = this.CoreInstructions[x][i].split(':')[0].replaceAll(" ", "");
-
-                this.CoreInstructions[x][i] = k;
+                let temp = this.CoreInstructions[x][i].split(':');
+                let k = temp[0].replaceAll(" ", "");
+                this.CoreInstructions[x][i] = temp[1];
                 this.cores[x].labels[k] = i;
             }
         }

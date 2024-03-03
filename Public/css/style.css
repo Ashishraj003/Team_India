@@ -5,8 +5,8 @@
   grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
 }
 body {
-  overflow-y: hidden; /* Hide vertical scrollbar */
-  overflow-x: hidden; /* Hide horizontal scrollbar */
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
 .pagination a {
   display: block;
@@ -68,7 +68,14 @@ body {
   align-items: flex-start;
   gap: 0.5rem;
 }
+button{
+  transition: all .4s ease;
 
+}
+.Top_buttons>button:hover{
+  background-color: rgba(221, 221, 221, 0.843);
+  border-style: inset;
+}
 .Top_buttons:first-child {
   margin-left: 2rem;
 }
@@ -120,14 +127,19 @@ body {
 
 
 .text_holder {
+  display: grid;
+  grid-template-columns: auto auto 100%;
+  width: max-content;
+}
+.console_holder{
   display: flex;
 }
 
 
 
-
 .text {
-  background-color: black;
+  background-color: rgb(0, 0, 0);
+  width: max-content;
   display: flex;
 }
 
@@ -158,7 +170,41 @@ body {
   background-color: #7d1f1f;
 }
 
+.consoles {
+  width: auto;
+  /* width: 30.375rem; */
+  width: 28.4375rem;
+  height: 29rem;
+  font-size: 0.9375rem;
+  font-family: monospace;
+  line-height: 0.9375rem;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+  resize: both;
+  color: rgb(255, 255, 255);
+  border: 0;
+  background-color: #222;
+  white-space: pre;
+  overflow: auto;
+  border: 0rem;
+  padding-left: 0.625rem;
+}
 
+.consoles {
+  scrollbar-arrow-color: #ee8;
+  scrollbar-base-color: #444;
+  scrollbar-track-color: #fdfdfd;
+  scrollbar-face-color: #444;
+  /* outer light */
+  scrollbar-3dlight-color: #444;
+  /* inner light */
+  scrollbar-highlight-color: #666;
+  /* outer dark */
+  scrollbar-darkshadow-color: #444;
+  /* inner dark */
+  scrollbar-shadow-color: #222;
+}
 #mytextarea {
   width: auto;
   /* width: 30.375rem; */
@@ -251,6 +297,7 @@ ul {
 .reg_header {
   /* position: fixed; */
   height: 22.5rem;
+  width: max-content;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -340,9 +387,9 @@ table input {
 }
 
 .register {
-  right: 0;
+  grid-column: 3;
+  /* right: 0; */
   width: 20%;
-
 }
 
 /* register heading  */

@@ -1,5 +1,6 @@
 import Instruction from "./Instruction.js";
 import {getBus, setBus} from "./Processor.js";
+import {cprint} from "./console_.js";
 class Core {
     constructor(num) {
         this.register = new Array(32).fill(0);
@@ -11,6 +12,8 @@ class Core {
         this.forwarding={};
     }
     execute(instruction) {
+        cprint(instruction, this.flag-1);
+        
         if(!this.#writeBack())
         {
             return;
