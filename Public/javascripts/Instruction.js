@@ -93,7 +93,7 @@ class Instruction {
         break;
       case "sw":
         this.rs1 = this.#valueof(components[1]);
-        // Assuming format is sw x1 0(x2) -> rs1->x1, rs2 -> x2, imd -> 0
+        // Assuming format is sw x1 0(x2) -> rs1->x1, rs2 -> x2, imd ->0
         let a2 = components[2].split("(");
         this.imd = parseInt(a2[0]);
         this.rs2 = this.#valueof(a2[1].replace(')', ''));

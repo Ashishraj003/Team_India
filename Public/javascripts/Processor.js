@@ -163,7 +163,7 @@ class Processor {
         this.cores[1].NumberofStalls=0;
         while (this.cores[0].pc < this.CoreInstructions[0].length || this.cores[1].pc < this.CoreInstructions[1].length) {
             this.run();
-        //    console.log("hi Sood");
+        //    console.log("hi Ashish");
         }
         
         this.cores[0].ipc = this.cores[0].numberOfcycles/(this.cores[0].numberOfcycles+this.cores[0].NumberofStalls);

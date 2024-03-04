@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const totalItems = 1024;
     let currentPage = 1;
 
-///
+//
 
     function decimalToHex32Bit(decimalNumber) {
         // Convert the decimal number to hexadecimal

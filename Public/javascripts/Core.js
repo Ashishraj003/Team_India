@@ -15,7 +15,7 @@ class Core {
         this.ipc=0;
     }
     execute(instruction) {
-        // cprint(instruction, this.flag-1);//prints instructions on console
+        //cprint(instruction, this.flag-1);//prints instructions on console
         
         if(!this.#writeBack())
         {

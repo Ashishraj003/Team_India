@@ -47,7 +47,7 @@ ace.define("ace/mode/risc", function (require, exports, module) {
     oop.inherits(Mode, TextMode);
 
     (function () {
-        // Extra setup goes here. (optional)
+        //Extra setup goes here. (optional)
     }).call(Mode.prototype);
 
     exports.Mode = Mode;
