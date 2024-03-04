@@ -1,7 +1,7 @@
 const radioRegister1 = document.querySelector("#radio_reg1");
 const radioRegister2 = document.querySelector("#radio_reg2");
 
-///
+////
 const table1 = document.querySelector("#reg1_table");
 const table2 = document.querySelector("#reg2_table");
 

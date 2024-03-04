@@ -14,7 +14,7 @@ sim_btn.addEventListener("click", ()=>{
     celebration.style.display = "none";
 
 });
-//
+///
 const letval = document.getElementById("latencyVal");
 closeOut.addEventListener("click", ()=>{
     setdiv.style.display = "none";
