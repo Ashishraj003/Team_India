@@ -34,7 +34,7 @@ ace.define("ace/mode/risc", function (require, exports, module) {
                     token: "function",
                     regex: "\\b(?:add|sub|srli|and|addi|lw|sw|la|li|beq|bne|bgt|blt|bgeu|bltu|jalr|jal|j|jr)\\b"
                 }
-                // Add more rules for other instructions and keywords/
+                // Add more rules for other instructions and keywords
             ]
         };
     };

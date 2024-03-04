@@ -5,7 +5,7 @@ const console1 = ace.edit(document.querySelector("#console1"), {
     theme:"ace/theme/chaos",
 
 });
-
+//
 console1.setReadOnly(true);
 console2.setReadOnly(true);
 const consoles = [console1, console2];
