@@ -10,36 +10,46 @@ class Core {
         this.instructions = [];
         this.labels = {};
         this.forwarding={};
+        this.NumberofStalls=0;
+        this.numberOfcycles=0;
+        this.ipc=0;
     }
     execute(instruction) {
-        cprint(instruction, this.flag-1);
+        // cprint(instruction, this.flag-1);//prints instructions on console
         
         if(!this.#writeBack())
         {
+            this.NumberofStalls++;
             return;
         }
         if(!this.#Memory())
         {
+            this.NumberofStalls++;
             return;
         }
         if(!this.#execute())
         {
+            this.NumberofStalls++;
             return;
         }
         if(this.branchTaken)
         {
             this.branchTaken=false;
             this.instructions[0]=undefined;
+            this.NumberofStalls+=2;
             return;
         }
         if(!this.#DecodeRegisterFetch())
         {
+            this.NumberofStalls++;
             return;
         }
         if(!this.#InstructionFetch(instruction))
         {
+            this.NumberofStalls++;
             return;
         }
+        this.numberOfcycles++;
         this.pc++;
     }
     #InstructionFetch(instruction){

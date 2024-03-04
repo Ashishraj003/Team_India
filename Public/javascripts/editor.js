@@ -89,7 +89,7 @@ function update() {
         return;
     }
     var pc2 = last[0] - parseInt(first_ele)
-    debugger;
+    // debugger;
 
     if (p1)
         var child = p1.children[pc2];
@@ -106,7 +106,7 @@ function update() {
         child = p2.children[pc2];
     if (child)
         child.classList.add("my-custom-class");
-    debugger;
+    // debugger;
 
 }
 
@@ -116,7 +116,7 @@ const pscroller2 = document.getElementById("mytextarea2").querySelector(".ace_sc
 const lasts = [0, 0];
 pscroller1.addEventListener("scroll", ()=>{
  
-    debugger;
+    // debugger;
     const parent = document.getElementById("mytextarea").querySelector(".ace_text-layer");
     var ele = document.getElementById("mytextarea").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
     var first_ele = ele.children[0].innerText - 1;
@@ -133,7 +133,7 @@ pscroller1.addEventListener("scroll", ()=>{
 });
 pscroller2.addEventListener("scroll", ()=>{
  
-    debugger;
+    // debugger;
     const parent = document.getElementById("mytextarea2").querySelector(".ace_text-layer");
     var ele = document.getElementById("mytextarea2").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
     var first_ele = ele.children[0].innerText - 1;
@@ -167,7 +167,7 @@ export function ChangeColor(pc,number)
 
     if (previoueEle)
         previoueEle.classList.remove("my-custom-class");
-    debugger;
+    // debugger;
     var first_ele = ele.children[0].innerText - 1;
     if (pc < first_ele) {
         return;

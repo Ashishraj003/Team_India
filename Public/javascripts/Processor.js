@@ -1,6 +1,6 @@
 import Core from "./Core.js"
 import { getValue, ChangeColor, EnableEdit, DisableEdit } from "./editor.js";
-///
+import {cprint} from "./console_.js";
 
 class Processor {
     constructor() {
@@ -157,11 +157,19 @@ class Processor {
 
         this.cores[0].pc = this.pcs[0];
         this.cores[1].pc = this.pcs[1];
-
+        this.cores[0].numberOfcycles=0;
+        this.cores[1].numberOfcycles=0;
+        this.cores[0].NumberofStalls=0;
+        this.cores[1].NumberofStalls=0;
         while (this.cores[0].pc < this.CoreInstructions[0].length || this.cores[1].pc < this.CoreInstructions[1].length) {
             this.run();
         //    console.log("hi Sood");
         }
+        
+        this.cores[0].ipc = this.cores[0].numberOfcycles/(this.cores[0].numberOfcycles+this.cores[0].NumberofStalls);
+        this.cores[1].ipc = this.cores[1].numberOfcycles/(this.cores[1].numberOfcycles+this.cores[1].NumberofStalls);
+        cprint("the value of IPC is: "+this.cores[0].ipc+"\nThe value of CPI is: "+1/this.cores[0].ipc,0);
+        cprint("the value of IPC is: "+this.cores[1].ipc+"\nThe value of CPI is: "+1/this.cores[1].ipc,1);
         // if (debug)
         //     console.log(this.memory);
     }
