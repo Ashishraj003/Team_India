@@ -1,5 +1,5 @@
 import Core from "./Core.js"
-import { getValue, ChangeColor, EnableEdit, DisableEdit } from "./editor.js";
+import { getValue, EnableEdit, DisableEdit } from "./editor.js";
 import {cprint} from "./console_.js";
 
 class Processor {
@@ -14,8 +14,20 @@ class Processor {
         this.freeMemfinal = 2 ** 12 - 1;
         this.pcs = [-1, -1]; //pc start
         this.strings = {};
+   
+        document.querySelector(".forward_input").addEventListener("click", ()=>{
+            if(this.cores[0].EnableForwarding){ 
+                this.cores[0].EnableForwarding=false;
+                this.cores[1].EnableForwarding = false;
+            }else{
+                this.cores[0].EnableForwarding=true;
+                this.cores[1].EnableForwarding = true;
+            }
+
+        });
     }
     init(instructSet1, instructSet2) {
+
         this.CoreInstructions = [];
         this.pcs = [-1, -1]; //pc start execution after .text 
         this.strings = {};
@@ -29,11 +41,12 @@ class Processor {
         this.set(1);
         this.cores[0].pc = this.pcs[0];
         this.cores[1].pc = this.pcs[1];
-        // var queue = [];
+        this.cores[0].Initialize(this.CoreInstructions[0]);
+        this.cores[1].Initialize(this.CoreInstructions[1]);
     }
-    // arr: .zero 80
-    // to parse .word etc... base: .word 0x1000000.
-    // arr: is handled in porcessor.js
+
+
+
     set(x) {// labels handelled
         /*
             base: 
@@ -44,6 +57,7 @@ class Processor {
             str1: .string "\n"
         */
         
+        console.log(this.cores[x].EnableForwarding);
         for (let i = 0; i < this.CoreInstructions[x].length; i++) {
             
             if (this.CoreInstructions[x][i].includes('#')) {
@@ -64,13 +78,13 @@ class Processor {
                 // var instruct = this.#split(this.CoreInstructions[x][i]);
                 let temp = this.CoreInstructions[x][i].split(':');
                 let k = temp[0].replaceAll(" ", "");
-                this.CoreInstructions[x][i] = temp[1];
+                this.CoreInstructions[x][i]= temp[1];
                 this.cores[x].labels[k] = i;
             }
         }
 
         // for .data
-        this.CoreInstructions[x].push("", "", "", "", ""); //need to change (a)
+        this.CoreInstructions[x].push("", "", "", ""); //need to change (a)
         for (let i = 0; i < this.pcs[x]; i++) {
             let instruct = this.CoreInstructions[x][i];
             let label = "+";
@@ -142,32 +156,37 @@ class Processor {
         if (!this.CoreInstructions) {
             initialization();
         }
+        
         // setTimeout(1000);s
-        ChangeColor(this.cores[0].pc, 1);
+        // ChangeColor(this.cores[0].pc, 1);
         if (this.cores[0].pc < this.CoreInstructions[0].length) {
-            this.cores[0].execute(this.CoreInstructions[0][this.cores[0].pc].replaceAll('\r', ''));
-        }
-        ChangeColor(this.cores[1].pc, 2);
-        if (this.cores[1].pc < this.CoreInstructions[1].length) {
-            this.cores[1].execute(this.CoreInstructions[1][this.cores[1].pc].replaceAll('\r', ''));
-        }
 
+            this.cores[0].execute();
+        }
+        // ChangeColor(this.cores[1].pc, 2);
+        if (this.cores[1].pc < this.CoreInstructions[1].length) {
+            this.cores[1].execute();
+        }
     }
     play() {
 
         this.cores[0].pc = this.pcs[0];
         this.cores[1].pc = this.pcs[1];
-        this.cores[0].numberOfcycles=0;
-        this.cores[1].numberOfcycles=0;
-        this.cores[0].NumberofStalls=0;
-        this.cores[1].NumberofStalls=0;
+        this.cores[0].NumberofInstructions=0;
+        this.cores[1].NumberofInstructions=0;
+        this.cores[0].numberofCycles=0;
+        this.cores[1].numberofCycles=0;
         while (this.cores[0].pc < this.CoreInstructions[0].length || this.cores[1].pc < this.CoreInstructions[1].length) {
             this.run();
         //    console.log("hi Ashish");
         }
         
-        this.cores[0].ipc = this.cores[0].numberOfcycles/(this.cores[0].numberOfcycles+this.cores[0].NumberofStalls);
-        this.cores[1].ipc = this.cores[1].numberOfcycles/(this.cores[1].numberOfcycles+this.cores[1].NumberofStalls);
+        this.cores[0].ipc = this.cores[0].NumberofInstructions/(this.cores[0].numberofCycles);
+        this.cores[1].ipc = this.cores[1].NumberofInstructions/(this.cores[1].numberofCycles);
+        cprint("the value of number of instruction is: "+this.cores[0].NumberofInstructions,0);
+        cprint("the value of IPC is: "+this.cores[0].numberofCycles,0);
+
+
         cprint("the value of IPC is: "+this.cores[0].ipc+"\nThe value of CPI is: "+1/this.cores[0].ipc,0);
         cprint("the value of IPC is: "+this.cores[1].ipc+"\nThe value of CPI is: "+1/this.cores[1].ipc,1);
         // if (debug)

@@ -13,8 +13,10 @@ console1.setValue("Read Only");
 console2.setValue("Read Only");
 
 export function cprint(str, x){
+    // consoles[x].gotoLine(10000);
     consoles[x].insert(str+"\n");
     consoles[x].scrollPageDown();
+    
 }
 
 

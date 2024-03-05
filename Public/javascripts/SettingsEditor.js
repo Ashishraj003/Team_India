@@ -8,11 +8,12 @@ const setdiv = document.querySelector(".settings");
 const celebration = document.querySelector(".confetti");
 const sim_btn = document.querySelector(".Simulatorbtn");
 sim_btn.addEventListener("click", ()=>{
-    if(celebration.style.display == "none")
-    celebration.style.display = "flex";
-    else
-    celebration.style.display = "none";
-
+    if (celebration.style.display == "none") {
+        celebration.style.display = "flex";
+    }
+    else {
+        celebration.style.display = "none";
+    }
 });
 //
 const letval = document.getElementById("latencyVal");

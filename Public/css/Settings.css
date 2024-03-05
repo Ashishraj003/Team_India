@@ -1,3 +1,33 @@
+
+
+@keyframes disco {
+  0% {
+    color: red;
+  }
+
+  25% {
+    color: #13c513;
+  }
+
+  50% {
+    color: rgb(117, 224, 224);
+  }
+
+  75% {
+    color: yellow;
+  }
+
+  100% {
+    color: red;
+  }
+}
+
+#forwarding {
+  animation: disco 6s infinite;
+  /* right: 0; */
+  /* position: fixed; */
+}
+
 .forwarding_toggle {
     /* right: ; */
     display: flex;
@@ -5,6 +35,7 @@
     /* display: inline-block; */
     width: 50px;
     height: 25px;
+    /* right: 0; */
 }
 
 .slider {

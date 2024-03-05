@@ -1,5 +1,17 @@
 "use strict";
 export const latencyMap ={};
+function checkRegError(arr){
+  for(let i=0 ;i<arr.length;i++){
+    if(arr[i]==undefined || arr[i]<0||arr[i]>31){
+      return true;
+    }
+  }
+}
+function checkImdError(imd){
+    if(imd==undefined){
+      return true;
+    }
+}
 const alias = {
   'ra': '1',
   'sp': '2',
@@ -66,6 +78,7 @@ class Instruction {
     }
     this.rsval1=0;
     this.rsval2=0;
+    this.error = false;
     switch (this.type) {
       case "and":
       case "add":
@@ -73,12 +86,15 @@ class Instruction {
         this.rd = this.#valueof(components[1]);
         this.rs1 = this.#valueof(components[2]);
         this.rs2 = this.#valueof(components[3]);
+        this.error = checkRegError([this.rd, this.rs1, this.rs2]);
         break;
       case "srli":
       case "addi":
         this.rd = this.#valueof(components[1]);
         this.rs1 = this.#valueof(components[2]);
+        this.error = checkRegError([this.rs1, this.rs2]);
         this.imd = parseInt(components[3]);
+        this.error = this.error || checkImdError(this.imd);
         break;
       case "lw":
         this.rd = this.#valueof(components[1]);
@@ -87,6 +103,9 @@ class Instruction {
           let a1 = components[2].split("(");
           this.imd = parseInt(a1[0]);
           this.rs1 = this.#valueof(a1[1].replace(')', ''));
+          this.error = checkRegError([this.rs2]);
+          this.error = this.error || checkImdError(this.imd);
+
         }else{
           this.label = components[2];
         }
@@ -97,12 +116,16 @@ class Instruction {
         let a2 = components[2].split("(");
         this.imd = parseInt(a2[0]);
         this.rs2 = this.#valueof(a2[1].replace(')', ''));
+        this.error = checkRegError([this.rs1, this.rs2]);
+        this.error = this.error || checkImdError(this.imd);
         break;
       case "la":
         this.str = components[1];
       case "li":
         this.rd = this.#valueof(components[1]);
+        this.error = checkRegError([this.rd]);
         this.imd = parseInt(components[2]);
+        this.error = this.error || checkImdError(this.imd);
         break;
       case "beq":
       case "bne":
@@ -112,15 +135,18 @@ class Instruction {
       case "bltu":
         this.rs1 = this.#valueof(components[1]);
         this.rs2 = this.#valueof(components[2]);
+        this.error = checkRegError([this.rs1, this.rs2]);
         this.label = components[3];
         break;
       case "jalr":
         this.rd = this.#valueof(components[2]);
         this.rs1 = this.#valueof(components[1]);
+        this.error = checkRegError([this.rs1, this.rd]);
         this.offset = parseInt(components[3]);
         break;
       case "jal":
         this.rd = this.#valueof(components[1]);
+        this.error = checkRegError([this.rd]);
         this.label = components[2];
         break;
 
@@ -129,14 +155,16 @@ class Instruction {
         break;
       case "jr":
         this.rd = this.#valueof(components[1]);
+        this.error = checkRegError([this.rd]);
         break;
       // Add more cases as needed for other instructions
       default:
       // Handle unsupported instruction type
+        this.error = true;
 
     }
   }
-
+  
   #split(s) {
     let i = 0;
     let a = [];

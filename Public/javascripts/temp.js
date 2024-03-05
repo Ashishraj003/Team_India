@@ -12,6 +12,7 @@ class Core {
         this.instructions = [];
         this.labels = {};
         this.preforwarding={};
+        this.postforwarding={};
         this.NumberofInstructions=0;
         this.numberofCycles=1;
         this.ipc=0;
@@ -36,6 +37,7 @@ class Core {
     execute() {
         // cprint(instruction, this.flag-1); //prints instructions on console 
         this.numberofCycles++;
+        this.update={};
         // debugger;
         if(!this.#writeBack())
         {
@@ -67,6 +69,7 @@ class Core {
         {
             return;
         }
+        this.postforwarding=this.preforwarding;
 
         // this.update={};
         this.pc++;
@@ -77,7 +80,7 @@ class Core {
         
         const object = this.InstructionMap[this.pc];
         if(object)
-            ChangeColor(object.pc, this.flag, 0);
+        ChangeColor(object.pc, this.flag, 0);
         if(this.instructions.length>0){
             this.instructions[0]=object;
         }else{
@@ -107,9 +110,9 @@ class Core {
         }
         else if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0 && this.EnableForwarding==true)
         {
-            if(this.preforwarding[this.instructions[0].rs1]!=undefined)
+            if(this.postforwarding[this.instructions[0].rs1]!=undefined)
             {
-                this.instructions[0].rsval1 = this.preforwarding[this.instructions[0].rs1];
+                this.instructions[0].rsval1 = this.postforwarding[this.instructions[0].rs1];
                 reg1++;
             }
             else
@@ -126,9 +129,9 @@ class Core {
         }
         else if(this.instructions[0].rs2!=undefined && this.Active_reg[this.instructions[0].rs2]!=0 && this.EnableForwarding==true)
         {
-            if(this.preforwarding[this.instructions[0].rs2]!=undefined)
+            if(this.postforwarding[this.instructions[0].rs2]!=undefined)
             {
-                this.instructions[0].rsval2 = this.preforwarding[this.instructions[0].rs2];
+                this.instructions[0].rsval2 = this.postforwarding[this.instructions[0].rs2];
                 reg2++;
             }
             else
@@ -139,12 +142,20 @@ class Core {
         }
 
         if(this.instructions[0].rs1!=undefined && reg1==0 ){
+            if(this.update[this.instructions[0].rs1]==1)
+            {
+                return false;
+            }
 
             this.instructions[0].rsval1 = this.register[this.instructions[0].rs1];
             reg1++;
         }
         if(this.instructions[0].rs2 !=undefined && reg2==0 )
         {
+            if(this.update[this.instructions[0].rs2]==1)
+            {
+                return false;
+            }
             this.instructions[0].rsval2 = this.register[this.instructions[0].rs2];
             reg2++;
         }
@@ -297,6 +308,7 @@ class Core {
             const regUpdate = document.getElementById(`reg${this.flag}Text${instructionObj.rd}`);
             regUpdate.value = instructionObj.valueAfterExecution;
             this.register[instructionObj.rd] = instructionObj.valueAfterExecution;
+            this.update[instructionObj.rd]=1;
         }  
         this.instructions[3]=undefined;
         this.Active_reg[instructionObj.rd]--;

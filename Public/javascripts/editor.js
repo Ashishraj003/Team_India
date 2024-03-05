@@ -15,8 +15,12 @@ ace.define("ace/mode/risc", function (require, exports, module) {
                     regex: ".*\:"
                 },
                 {
+                    token: "function",
+                    regex: "\\.[^\\s]+"
+                },
+                {
                     token: "variable",
-                    regex: "\\b(?:x|a)\\d+\\b"
+                    regex: "\\b(?:x[0-9]|a[0-9]|x1\\d|x2\\d|x31|x30)\\b"
                 },
                 {
                     token: "string",
@@ -32,7 +36,16 @@ ace.define("ace/mode/risc", function (require, exports, module) {
                 },
                 {
                     token: "function",
-                    regex: "\\b(?:add|sub|srli|and|addi|lw|sw|la|li|beq|bne|bgt|blt|bgeu|bltu|jalr|jal|j|jr)\\b"
+                    regex: "\\b(?:add|sub|srli|and|addi|lw|sw|la|li|beq|bne|bgt|blt|bgeu|bltu|jalr|jal|j|jr)\\b",
+                    // onMatch: function(value, state, stack, line) {
+                    //     // Suggestions for functions
+                    //     var functionSuggestions = ['ad', 'su', 'sr', 'a', 'ad', 'l', 's', 'l', 'l', 'be', 'bn', 'bg', 'bl', 'bg', 'bl', 'ja', 'ja', 'j', 'jr'];
+                    //     return {
+                    //         value: value,
+                    //         meta: "function",
+                    //         completions: functionSuggestions
+                    //     };
+                    // }
                 }
                 // Add more rules for other instructions and keywords
             ]
@@ -148,25 +161,25 @@ pscroller2.addEventListener("scroll", ()=>{
         child.classList.add("my-custom-class");
     
 });
-export function ChangeColor(pc,number)
+export function ChangeColor(pc,number,level)
 {   
     lasts[number] = pc;
     var previoueEle,parent,ele;
     if(number==1)
     {
-        previoueEle = document.getElementById("mytextarea").querySelector(".my-custom-class");
+        previoueEle = document.getElementById("mytextarea").querySelector(".my-custom-class"+level);
         parent = document.getElementById("mytextarea").querySelector(".ace_text-layer");
         ele = document.getElementById("mytextarea").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
     }
     else
     {
-        previoueEle = document.getElementById("mytextarea2").querySelector(".my-custom-class");
+        previoueEle = document.getElementById("mytextarea2").querySelector(".my-custom-class"+level);
         parent = document.getElementById("mytextarea2").querySelector(".ace_text-layer");
         ele = document.getElementById("mytextarea2").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
     }
 
     if (previoueEle)
-        previoueEle.classList.remove("my-custom-class");
+        previoueEle.classList.remove("my-custom-class"+level);
     // debugger;
     var first_ele = ele.children[0].innerText - 1;
     if (pc < first_ele) {
@@ -177,7 +190,7 @@ export function ChangeColor(pc,number)
     if (parent)
         var child = parent.children[pc2];
     if (child)
-        child.classList.add("my-custom-class");
+        child.classList.add("my-custom-class"+level);
 }
 
 const li = document.createElement("button");
