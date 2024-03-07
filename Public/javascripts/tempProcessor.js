@@ -166,7 +166,7 @@ class Processor {
             this.cores[0].execute();
         }
         // ChangeColor(this.cores[1].pc, 2);
-        if (this.cores[1].flag2!=1) {
+        if (this.cores[1].pc < this.CoreInstructions[1].length) {
             this.cores[1].execute();
         }
     }
@@ -190,8 +190,7 @@ class Processor {
         this.cores[1].numberofCycles=0;
         this.cores[0].Initialize(this.CoreInstructions[0]);
         this.cores[1].Initialize(this.CoreInstructions[1]);
-        
-        while (this.cores[0].flag2!=1 || this.cores[1].flag2!=1) {
+        while (this.cores[0].pc < this.CoreInstructions[0].length || this.cores[1].pc < this.CoreInstructions[1].length) {
             this.run();
         //    console.log("hi Ashish");
         }

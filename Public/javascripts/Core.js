@@ -13,15 +13,18 @@ class Core {
         this.labels = {};
         this.preforwarding={};
         this.NumberofInstructions=0;
-        this.numberofCycles=1;
+        this.numberofCycles=0;
         this.ipc=0;
         this.EnableForwarding=false;
+        this.TotalInstuctionsLenght=0;
         this.InstructionMap={};
         this.predictor=new Predictor();
         // this.update={};
+        this.flag2=0;
     }
     Initialize(CoreInstructions)
     {
+        this.TotalInstuctionsLenght = CoreInstructions.length;
         for(let i=0;i<CoreInstructions.length;i++)
         {
             let instruct = new Instruction(CoreInstructions[i]);
@@ -37,6 +40,10 @@ class Core {
         // cprint(instruction, this.flag-1); //prints instructions on console 
         this.numberofCycles++;
         // debugger;
+        // if(this.pc>=this.TotalInstuctionsLenght)
+        // {
+        //     return ;
+        // }
         if(!this.#writeBack())
         {
             return;
@@ -69,8 +76,42 @@ class Core {
         }
 
         // this.update={};
-        this.pc++;
+        // do {
+        //     this.pc++;
+        // } while ( this.pc< this.TotalInstuctionsLenght && this.InstructionMap[this.pc] == undefined);
+
+        function fun(Core)
+        {
+            if(Core.TotalInstuctionsLenght>Core.pc )
+            {       
+                if(Core.InstructionMap[Core.pc]==undefined)
+                {
+                    return true;
+                }
+                return false;
+            }
+            else
+            {
+                for(let i=0;i<Core.instructions.length;i++)
+                {
+                    if(Core.instructions[i]!=undefined)
+                    {
+                        return false;
+                    }
+                }
+                Core.flag2=1;   
+                return false;
+            }
+        }
+        do {
+            this.pc++;
+        } while (fun(this));
+        if(this.flag2==1)
+        {
+            return ;
+        }
     }
+    
     #InstructionFetch(){
         
         // const object = new Instruction(instruction);
