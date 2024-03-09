@@ -3,28 +3,35 @@ import {getBus, setBus} from "./Processor.js";
 import {cprint} from "./console_.js";
 import { ChangeColor } from "./editor.js";
 import Predictor from "./Predictor.js";
+function IfBranch(type){
+    if(type=="bne" || type=="beq" || type=="blt" || type=="bgtu" || type=="bltu" || type=="bgt"){
+        return true;
+    }
+    return false;
+}
 class Core {
     constructor(num) {
-        this.register = new Array(32).fill(0);
-        this.Active_reg = new Array(32).fill(0);
-        this.pc = 0;
-        this.flag = num;
-        this.instructions = [];
+        
+        this.id = num;
         this.labels = {};
-        this.preforwarding={};
-        this.NumberofInstructions=0;
-        this.numberofCycles=0;
         this.ipc=0;
         this.EnableForwarding=false;
-        this.TotalInstuctionsLenght=0;
-        this.InstructionMap={};
         this.predictor=new Predictor();
-        // this.update={};
-        this.flag2=0;
+        
     }
-    Initialize(CoreInstructions)
+    Initialize(CoreInstructions, pcs)
     {
+        this.register = new Array(32).fill(0);
+        this.Active_reg = new Array(32).fill(0);
+        this.InstructionMap={};
+        this.instructions = [];
+        this.preforwarding={};
+        this.pc = pcs;
+        console.log(pcs);
+        this.End=false;
+        this.NumberofInstructions=0;
         this.TotalInstuctionsLenght = CoreInstructions.length;
+        this.numberofCycles=0;
         for(let i=0;i<CoreInstructions.length;i++)
         {
             let instruct = new Instruction(CoreInstructions[i]);
@@ -37,23 +44,20 @@ class Core {
         }
     }
     execute() {
-        // cprint(instruction, this.flag-1); //prints instructions on console 
+        // cprint(this.instructions, this.id-1); //prints instructions on console 
+        console.log(this.instructions, this.id, this.pc);
         this.numberofCycles++;
-        // debugger;
-        // if(this.pc>=this.TotalInstuctionsLenght)
-        // {
-        //     return ;
-        // }
+        while (this.#CheckEmptyLine()){
+            this.pc++;
+        }
         if(!this.#writeBack())
         {
             return;
         }
-        // if(this.instructions[2]!=undefined) this.numberofCycles++;
         if(!this.#Memory())
         {
             return;
         }
-        // if(this.instructions[1]!=undefined) this.numberofCycles++;
         if(!this.#execute())
         {
             return;
@@ -62,10 +66,9 @@ class Core {
         {
             this.branchTaken=false;
             this.instructions[0]=undefined;
-            this.numberofCycles+=1;
+            // this.NumberofInstructions++;
             return;
         }
-        // if(this.instructions[0]!=undefined) this.numberofCycles++;
         if(!this.#DecodeRegisterFetch())
         {
             return;
@@ -74,60 +77,51 @@ class Core {
         {
             return;
         }
-
-        // this.update={};
-        // do {
-        //     this.pc++;
-        // } while ( this.pc< this.TotalInstuctionsLenght && this.InstructionMap[this.pc] == undefined);
-
-        function fun(Core)
-        {
-            if(Core.TotalInstuctionsLenght>Core.pc )
-            {       
-                if(Core.InstructionMap[Core.pc]==undefined)
-                {
-                    return true;
-                }
-                return false;
-            }
-            else
-            {
-                for(let i=0;i<Core.instructions.length;i++)
-                {
-                    if(Core.instructions[i]!=undefined)
-                    {
-                        return false;
-                    }
-                }
-                Core.flag2=1;   
-                return false;
-            }
-        }
-        do {
-            this.pc++;
-        } while (fun(this));
-        if(this.flag2==1)
-        {
-            return ;
-        }
+        
+        this.pc++;
+        this.End = this.#CheckEnd();
+        
     }
-    
+    #CheckEmptyLine()
+    {
+        if(this.TotalInstuctionsLenght>this.pc && this.InstructionMap[this.pc]==undefined)
+        {
+            return true;
+        }
+        return false;
+        
+    }
+    #CheckEnd(){
+        if(this.TotalInstuctionsLenght>this.pc) return false;
+        for(let i=0;i<this.instructions.length;i++)
+        {
+            if(this.instructions[i]!=undefined)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
     #InstructionFetch(){
-        
-        // const object = new Instruction(instruction);
-        
+        while(this.#CheckEmptyLine()){
+            this.pc++;
+        }
         const object = this.InstructionMap[this.pc];
-        if(object)
-            ChangeColor(object.pc, this.flag, 0);
+        if(object){
+            ChangeColor(object.pc, this.id, 0);
+            object.latency_var = object.latency;
+            cprint(object.type, this.id-1);
+            cprint(this.pc, this.id-1);
+            
+        }
         if(this.instructions.length>0){
             this.instructions[0]=object;
         }else{
             this.instructions.push(object);
         }
-        if(this.instructions[0]!=undefined) this.NumberofInstructions++;
-        if(this.instructions[0]!=undefined && (this.instructions[0].type=="bne" || this.instructions[0].type=="beq" || this.instructions[0].type=="blt" || this.instructions[0].type=="bgtu" || this.instructions[0].type=="bltu" || this.instructions[0].type=="bgt"))
+        if(this.instructions[0]!=undefined && IfBranch(this.instructions[0].type))
         {
-            if(this.predictor.predict(this.pc)==true)//branch taken
+            if(this.predictor.predict(this.pc))//branch taken
             {
                 this.pc = this.labels[this.instructions[0].label];
             }
@@ -140,13 +134,14 @@ class Core {
         if(this.instructions[0]==undefined)
             return true;
         //this else if is for pipeline forwardings....
-        ChangeColor(this.instructions[0].pc, this.flag, 1);
-        if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0 && this.EnableForwarding!=true)
+        ChangeColor(this.instructions[0].pc, this.id, 1);
+        if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0){
+        if(!this.EnableForwarding)
         {
             this.NumberofStalls++;
             return false;
         }
-        else if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0 && this.EnableForwarding==true)
+        else
         {
             if(this.preforwarding[this.instructions[0].rs1]!=undefined)
             {
@@ -159,13 +154,14 @@ class Core {
                 return;
             }
         }
-        
-        if(this.instructions[0].rs2!=undefined && this.Active_reg[this.instructions[0].rs2]!=0 && this.EnableForwarding!=true)
+    }
+    if(this.instructions[0].rs2!=undefined && this.Active_reg[this.instructions[0].rs2]!=0){
+        if(!this.EnableForwarding)
         {
             this.NumberofStalls++;
             return false;
         }
-        else if(this.instructions[0].rs2!=undefined && this.Active_reg[this.instructions[0].rs2]!=0 && this.EnableForwarding==true)
+        else
         {
             if(this.preforwarding[this.instructions[0].rs2]!=undefined)
             {
@@ -178,7 +174,7 @@ class Core {
                 return;
             }
         }
-
+    }
         if(this.instructions[0].rs1!=undefined && reg1==0 ){
 
             this.instructions[0].rsval1 = this.register[this.instructions[0].rs1];
@@ -197,7 +193,7 @@ class Core {
             this.instructions.push(this.instructions[0]);
         }
         //
-
+        
         this.instructions[0]=undefined;
         return true;
         
@@ -206,12 +202,12 @@ class Core {
         if(this.instructions[1]==undefined)
             return true;
         //
-        ChangeColor(this.instructions[1].pc, this.flag, 2);
+        ChangeColor(this.instructions[1].pc, this.id, 2);
         const instructionObj = this.instructions[1];
 
         // no latency
-        if(this.instructions[1].latency > 1){
-            this.instructions[1].latency--;
+        if(this.instructions[1].latency_var > 1){
+            this.instructions[1].latency_var--;
             return false;
         }
         this.Active_reg[instructionObj.rd]++;//VVIP dont delete... because after I write back the instruction I earse the 
@@ -300,7 +296,7 @@ class Core {
         {
             return true;
         }
-        ChangeColor(this.instructions[2].pc, this.flag, 3);
+        ChangeColor(this.instructions[2].pc, this.id, 3);
         if(this.instructions[2].type=="lw" ||this.instructions[2].type=="sw" )
         {
             if(this.instructions[2].type=="lw" )//since we are reading only rs1 we need to check it if its in use or not
@@ -328,14 +324,16 @@ class Core {
         return true;
     }
     #writeBack() {// writes to the front end ...
+        
         if(this.instructions[3]==undefined)
         {
             return true;
         }
-        ChangeColor(this.instructions[3].pc, this.flag, 4);
+        this.NumberofInstructions++;
+        ChangeColor(this.instructions[3].pc, this.id, 4);
         const instructionObj = this.instructions[3];
         if (instructionObj.rd) {
-            const regUpdate = document.getElementById(`reg${this.flag}Text${instructionObj.rd}`);
+            const regUpdate = document.getElementById(`reg${this.id}Text${instructionObj.rd}`);
             regUpdate.value = instructionObj.valueAfterExecution;
             this.register[instructionObj.rd] = instructionObj.valueAfterExecution;
         }  
@@ -368,17 +366,19 @@ class Core {
         if(instructionObj.imd !=undefined){
 
             instructionObj.locationOfPull = instructionObj.rsval1/4 + instructionObj.imd/4; 
-
+            // this.NumberofInstructions++;
         }
         else{
-            
+            //pseudo instruction
+            this.NumberofInstructions+=1;
+            this.numberofCycles+=3;
             instructionObj.locationOfPull = this.labels[instructionObj.label];
-
         }
     }
     sw(instructionObj) {
         // Assuming format is sw x1 0(x2) -> rs1->x1, rs2 -> x2, imd -> 0
         if(instructionObj.imd !=undefined){
+            // this.NumberofInstructions++;
             instructionObj.locationOfPush =instructionObj.rsval2/4 + instructionObj.imd/4;
         }
         else
@@ -398,6 +398,8 @@ class Core {
         if (instructionObj.rsval1 == instructionObj.rsval2) {
             this.branchTaken=true;
             this.pc = this.labels[instructionObj.label];
+            // this.NumberofInstructions--;
+            // this.numberofCycles-=2;
         }
     }
     bne(instructionObj) {
@@ -410,25 +412,25 @@ class Core {
     // need to correct and add bge
     bgt(instructionObj) {
         if (instructionObj.rsval1 >= instructionObj.rsval2) {
-            this.branchTaken=true;
+             this.branchTaken=true;
             this.pc = this.labels[instructionObj.label];
         }
     }
     blt(instructionObj) {
         if (instructionObj.rsval1 < instructionObj.rsval2) {
-            this.branchTaken=true;
+             this.branchTaken=true;
             this.pc = this.labels[instructionObj.label];
         }
     }
     bgeu(instructionObj) {
         if (instructionObj.rsval1 >= instructionObj.rsval2) {
-            this.branchTaken=true;
+             this.branchTaken=true;
             this.pc = this.labels[instructionObj.label];
         }
     }
     bltu(instructionObj) {
         if (instructionObj.rsval1 < instructionObj.rsval2) {
-            this.branchTaken=true;
+             this.branchTaken=true;
             this.pc = this.labels[instructionObj.label];
         }
     }
@@ -440,16 +442,16 @@ class Core {
     // }
     
     jal(instructionObj) {
-        this.branchTaken=true;
+         this.branchTaken=true;
         instructionObj.valueAfterExecution = this.pc + 1;//as insturctions are stored as arrays.... so pc + 1 is req
         this.pc = this.labels[instructionObj.label];
     }
     j(instructionObj) {
-        this.branchTaken=true;
+         this.branchTaken=true;
         this.pc = this.labels[instructionObj.label];
     }
     jr(instructionObj) {
-        this.branchTaken=true;
+         this.branchTaken=true;
         this.pc = this.register[instructionObj.rd];
     }
     

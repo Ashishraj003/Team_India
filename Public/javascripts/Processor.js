@@ -39,10 +39,8 @@ class Processor {
         this.CoreInstructions[1] = instructSet2;
         this.set(0);
         this.set(1);
-        this.cores[0].pc = this.pcs[0];
-        this.cores[1].pc = this.pcs[1];
-        this.cores[0].Initialize(this.CoreInstructions[0]);
-        this.cores[1].Initialize(this.CoreInstructions[1]);
+        this.cores[0].Initialize(this.CoreInstructions[0], this.pcs[0]);
+        this.cores[1].Initialize(this.CoreInstructions[1], this.pcs[1]);
     }
 
 
@@ -75,16 +73,12 @@ class Processor {
         for (let i = this.pcs[x]; i < this.CoreInstructions[x].length; i++) {
             this.CoreInstructions[x][i] = this.CoreInstructions[x][i].replaceAll("  ", " ");
             if (this.CoreInstructions[x][i].includes(':') && this.pcs[x] != -1) {
-                // var instruct = this.#split(this.CoreInstructions[x][i]);
                 let temp = this.CoreInstructions[x][i].split(':');
                 let k = temp[0].replaceAll(" ", "");
                 this.CoreInstructions[x][i]= temp[1];
                 this.cores[x].labels[k] = i;
             }
         }
-
-        // for .data
-        this.CoreInstructions[x].push("", "", "", ""); //need to change (a)
         for (let i = 0; i < this.pcs[x]; i++) {
             let instruct = this.CoreInstructions[x][i];
             let label = "+";
@@ -152,60 +146,28 @@ class Processor {
         }
     }
     run() {
-        // if statement for string end for both
-        if (!this.CoreInstructions) {
+        if (!this.CoreInstructions){
             initialization();
         }
-        
-        // setTimeout(1000);s
-        // ChangeColor(this.cores[0].pc, 1);
-        // if (this.cores[0].pc < this.CoreInstructions[0].length) {
-        if(this.cores[0].flag2!=1)
-        {
-
+        if(!this.cores[0].End){
             this.cores[0].execute();
         }
-        // ChangeColor(this.cores[1].pc, 2);
-        if (this.cores[1].flag2!=1) {
+        if (!this.cores[1].End){
             this.cores[1].execute();
         }
     }
     play() {
-        document.querySelector(".forward_input").addEventListener("click", ()=>{
-            if(this.cores[0].EnableForwarding){ 
-                this.cores[0].EnableForwarding=true;
-                this.cores[1].EnableForwarding = true;
-            }else{
-                this.cores[0].EnableForwarding=false;
-                this.cores[1].EnableForwarding = false;
-            }
-    
-        });
-
-        this.cores[0].pc = this.pcs[0];
-        this.cores[1].pc = this.pcs[1];
-        this.cores[0].NumberofInstructions=0;
-        this.cores[1].NumberofInstructions=0;
-        this.cores[0].numberofCycles=0;
-        this.cores[1].numberofCycles=0;
-        this.cores[0].Initialize(this.CoreInstructions[0]);
-        this.cores[1].Initialize(this.CoreInstructions[1]);
         
-        while (this.cores[0].flag2!=1 || this.cores[1].flag2!=1) {
+        debugger;
+        while (!this.cores[0].End || !this.cores[1].End) {
             this.run();
-        //    console.log("hi Ashish");
         }
-        
         this.cores[0].ipc = this.cores[0].NumberofInstructions/(this.cores[0].numberofCycles);
         this.cores[1].ipc = this.cores[1].NumberofInstructions/(this.cores[1].numberofCycles);
         cprint("the value of number of instruction is: "+this.cores[0].NumberofInstructions,0);
         cprint("the value of IPC is: "+this.cores[0].numberofCycles,0);
-
-
         cprint("the value of IPC is: "+this.cores[0].ipc+"\nThe value of CPI is: "+1/this.cores[0].ipc,0);
         cprint("the value of IPC is: "+this.cores[1].ipc+"\nThe value of CPI is: "+1/this.cores[1].ipc,1);
-        // if (debug)
-        //     console.log(this.memory);
     }
     setmem(value, address) {
         this.memory[address] = value;
