@@ -14,13 +14,13 @@ class Core {
         
         this.id = num;
         this.labels = {};
-        this.ipc=0;
         this.EnableForwarding=false;
         this.predictor=new Predictor();
         
     }
     Initialize(CoreInstructions, pcs)
     {
+        this.ipc=0;
         this.register = new Array(32).fill(0);
         this.Active_reg = new Array(32).fill(0);
         this.InstructionMap={};
@@ -46,10 +46,17 @@ class Core {
     execute() {
         // cprint(this.instructions, this.id-1); //prints instructions on console 
         console.log(this.instructions, this.id, this.pc);
-        this.numberofCycles++;
+        
         while (this.#CheckEmptyLine()){
             this.pc++;
         }
+        this.End = this.#CheckEnd();
+        if (this.End) {
+            return;
+        }
+
+        this.numberofCycles++;
+
         if(!this.#writeBack())
         {
             return;
@@ -79,7 +86,7 @@ class Core {
         }
         
         this.pc++;
-        this.End = this.#CheckEnd();
+        this.End = this.#CheckEnd(); 
         
     }
     #CheckEmptyLine()
@@ -108,10 +115,10 @@ class Core {
         }
         const object = this.InstructionMap[this.pc];
         if(object){
-            ChangeColor(object.pc, this.id, 0);
+            ChangeColor(object.pc, this.id, 1);
             object.latency_var = object.latency;
-            cprint(object.type, this.id-1);
-            cprint(this.pc, this.id-1);
+            // cprint(object.type, this.id-1);
+            // cprint(this.pc, this.id-1);
             
         }
         if(this.instructions.length>0){
@@ -131,50 +138,55 @@ class Core {
     #DecodeRegisterFetch(){
         let reg1=0;
         let reg2=0;
+        
         if(this.instructions[0]==undefined)
             return true;
         //this else if is for pipeline forwardings....
-        ChangeColor(this.instructions[0].pc, this.id, 1);
-        if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0){
-        if(!this.EnableForwarding)
-        {
-            this.NumberofStalls++;
-            return false;
+        if(this.preforwarding[this.instructions[0].rs2]==1 && this.preforwarding[this.instructions[0].rs1]==3 && this.instructions[0].type=='blt'){
+            debugger;
         }
-        else
-        {
-            if(this.preforwarding[this.instructions[0].rs1]!=undefined)
+        ChangeColor(this.instructions[0].pc, this.id, 2);
+            if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0){
+            if(!this.EnableForwarding)
             {
-                this.instructions[0].rsval1 = this.preforwarding[this.instructions[0].rs1];
-                reg1++;
+                this.NumberofStalls++;
+                return false;
             }
             else
             {
-                this.NumberofStalls++;
-                return;
+                if(this.preforwarding[this.instructions[0].rs1]!=undefined)
+                {
+                    this.instructions[0].rsval1 = this.preforwarding[this.instructions[0].rs1];
+                    reg1++;
+                }
+                else
+                {
+                    this.NumberofStalls++;
+                    return;
+                }
             }
         }
-    }
-    if(this.instructions[0].rs2!=undefined && this.Active_reg[this.instructions[0].rs2]!=0){
-        if(!this.EnableForwarding)
-        {
-            this.NumberofStalls++;
-            return false;
-        }
-        else
-        {
-            if(this.preforwarding[this.instructions[0].rs2]!=undefined)
+        if(this.instructions[0].rs2!=undefined && this.Active_reg[this.instructions[0].rs2]!=0){
+            if(!this.EnableForwarding)
             {
-                this.instructions[0].rsval2 = this.preforwarding[this.instructions[0].rs2];
-                reg2++;
+                this.NumberofStalls++;
+                return false;
             }
             else
             {
-                this.NumberofStalls++;
-                return;
+                if(this.preforwarding[this.instructions[0].rs2]!=undefined)
+                {
+                    this.instructions[0].rsval2 = this.preforwarding[this.instructions[0].rs2];
+                    reg2++;
+                }
+                else
+                {
+                    this.NumberofStalls++;
+                    return;
+                }
             }
         }
-    }
+
         if(this.instructions[0].rs1!=undefined && reg1==0 ){
 
             this.instructions[0].rsval1 = this.register[this.instructions[0].rs1];
@@ -184,6 +196,14 @@ class Core {
         {
             this.instructions[0].rsval2 = this.register[this.instructions[0].rs2];
             reg2++;
+        }
+        // to remove from forwadding
+        if (this.instructions[0].rd)
+        {
+            if(this.instructions[0].rd==5 && this.instructions[0].type == 'lw'){
+                debugger;
+            }
+            this.preforwarding[this.instructions[0].rd] = undefined;
         }
 
         if(this.instructions.length>1){
@@ -202,7 +222,7 @@ class Core {
         if(this.instructions[1]==undefined)
             return true;
         //
-        ChangeColor(this.instructions[1].pc, this.id, 2);
+        ChangeColor(this.instructions[1].pc, this.id, 3);
         const instructionObj = this.instructions[1];
 
         // no latency
@@ -282,7 +302,7 @@ class Core {
             this.instructions.push(this.instructions[1]);
         }
         // this.numberofCycles++;
-        if(this.instructions[1]!=undefined && this.instructions[1].valueAfterExecution!=undefined)
+        if(this.instructions[1]!=undefined && this.instructions[1].valueAfterExecution!=undefined && this.instructions[1].type != 'lw')
         {
             this.preforwarding[this.instructions[1].rd]=this.instructions[1].valueAfterExecution;
         }
@@ -296,13 +316,17 @@ class Core {
         {
             return true;
         }
-        ChangeColor(this.instructions[2].pc, this.id, 3);
+        ChangeColor(this.instructions[2].pc, this.id, 4);
         if(this.instructions[2].type=="lw" ||this.instructions[2].type=="sw" )
         {
             if(this.instructions[2].type=="lw" )//since we are reading only rs1 we need to check it if its in use or not
             {
                 this.instructions[2].valueAfterExecution = getBus(this.instructions[2].locationOfPull);
-                this.preforwarding[this.instructions[2].rd]=this.instructions[2].valueAfterExecution;
+                if(this.EnableForwarding)
+                {
+                    debugger;
+                    this.preforwarding[this.instructions[2].rd]=this.instructions[2].valueAfterExecution;
+                }
             }
             else if(this.instructions[2].type=="sw" )
             {
@@ -318,7 +342,6 @@ class Core {
         else{
             this.instructions.push(this.instructions[2]);
         }
-        
         this.instructions[2]=undefined;
         // return;
         return true;
@@ -330,7 +353,7 @@ class Core {
             return true;
         }
         this.NumberofInstructions++;
-        ChangeColor(this.instructions[3].pc, this.id, 4);
+        ChangeColor(this.instructions[3].pc, this.id, 5);
         const instructionObj = this.instructions[3];
         if (instructionObj.rd) {
             const regUpdate = document.getElementById(`reg${this.id}Text${instructionObj.rd}`);
@@ -338,8 +361,8 @@ class Core {
             this.register[instructionObj.rd] = instructionObj.valueAfterExecution;
         }  
         this.instructions[3]=undefined;
+        // if(instructionObj.rd)
         this.Active_reg[instructionObj.rd]--;
-        
         return true;
     }
     and(instructionObj)
@@ -362,6 +385,7 @@ class Core {
     }
     lw(instructionObj) {
         // debugger;
+        
         // Assuming format is lw x1 0(x2) -> rd->x1, rs1 -> x2, imd -> 0
         if(instructionObj.imd !=undefined){
 
@@ -370,8 +394,12 @@ class Core {
         }
         else{
             //pseudo instruction
+            // if(!this.EnableForwarding)
             this.NumberofInstructions+=1;
-            this.numberofCycles+=3;
+            this.numberofCycles+=1;
+            if(!this.EnableForwarding){
+                this.numberofCycles+=2;
+            }
             instructionObj.locationOfPull = this.labels[instructionObj.label];
         }
     }
@@ -418,8 +446,10 @@ class Core {
     }
     blt(instructionObj) {
         if (instructionObj.rsval1 < instructionObj.rsval2) {
-             this.branchTaken=true;
+            this.branchTaken=true;
             this.pc = this.labels[instructionObj.label];
+        }else{
+            debugger;
         }
     }
     bgeu(instructionObj) {

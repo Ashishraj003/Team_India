@@ -158,14 +158,19 @@ class Processor {
     }
     play() {
         
-        debugger;
+        // debugger;
         while (!this.cores[0].End || !this.cores[1].End) {
             this.run();
         }
         this.cores[0].ipc = this.cores[0].NumberofInstructions/(this.cores[0].numberofCycles);
         this.cores[1].ipc = this.cores[1].NumberofInstructions/(this.cores[1].numberofCycles);
-        cprint("the value of number of instruction is: "+this.cores[0].NumberofInstructions,0);
-        cprint("the value of IPC is: "+this.cores[0].numberofCycles,0);
+        cprint("Number of instruction are: "+this.cores[0].NumberofInstructions,0);
+        cprint("the number of cycle are: "+this.cores[0].numberofCycles,0);
+        cprint("the number of stalls are: "+(this.cores[0].numberofCycles-this.cores[0].NumberofInstructions-4),0);
+        cprint("Number of instruction are: "+this.cores[1].NumberofInstructions,1);
+        cprint("the number of cycle are: "+this.cores[1].numberofCycles, 1);
+        cprint("the number of stalls are: "+(this.cores[1].numberofCycles-this.cores[1].NumberofInstructions-4),1);
+        
         cprint("the value of IPC is: "+this.cores[0].ipc+"\nThe value of CPI is: "+1/this.cores[0].ipc,0);
         cprint("the value of IPC is: "+this.cores[1].ipc+"\nThe value of CPI is: "+1/this.cores[1].ipc,1);
     }

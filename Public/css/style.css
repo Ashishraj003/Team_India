@@ -508,19 +508,20 @@ table {
   /* Adjust the duration and iteration count as needed */
 }
 .my-custom-class2::before {
-  right: 0;
-  position: absolute;
+  /* right: 0; */
+  position: relative;
   animation: fade 4s infinite;
   content: "ID/RF";
   /* Adjust the duration and iteration count as needed */
 }
 .my-custom-class3::before {
-  position: absolute;
+  position: relative;
   animation: fade 4s infinite;
   content: "EX";
   /* Adjust the duration and iteration count as needed */
 }
 .my-custom-class4::before {
+  position: relative;
   animation: fade 4s infinite;
   content: "MEM";
   /* Adjust the duration and iteration count as needed */

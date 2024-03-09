@@ -126,12 +126,31 @@ function update() {
 const run = document.querySelector(".Run");
 const pscroller1 = document.getElementById("mytextarea").querySelector(".ace_scrollbar");
 const pscroller2 = document.getElementById("mytextarea2").querySelector(".ace_scrollbar");
-const lasts = [0, 0];
+const lasts = [[-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1]];
 pscroller1.addEventListener("scroll", ()=>{
  
     // debugger;
     const parent = document.getElementById("mytextarea").querySelector(".ace_text-layer");
     var ele = document.getElementById("mytextarea").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
+    var first_ele = ele.children[0].innerText - 1;
+    for(let x=1;x<6;x++){
+        if (lasts[0][x] < first_ele) {
+            continue;
+        }
+        var pc2 = lasts[0][x] - parseInt(first_ele)
+        if (parent && parent.children)
+            var child = parent.children[pc2];
+        if (child)
+            child.classList.add("my-custom-class"+x);
+
+    }
+    
+});
+pscroller2.addEventListener("scroll", ()=>{
+ 
+    // debugger;
+    const parent = document.getElementById("mytextarea2").querySelector(".ace_text-layer");
+    var ele = document.getElementById("mytextarea2").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
     var first_ele = ele.children[0].innerText - 1;
     if (lasts[1] < first_ele) {
         return;
@@ -142,28 +161,23 @@ pscroller1.addEventListener("scroll", ()=>{
         var child = parent.children[pc2];
     if (child)
         child.classList.add("my-custom-class");
-    
-});
-pscroller2.addEventListener("scroll", ()=>{
- 
-    // debugger;
-    const parent = document.getElementById("mytextarea2").querySelector(".ace_text-layer");
-    var ele = document.getElementById("mytextarea2").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
-    var first_ele = ele.children[0].innerText - 1;
-    if (lasts[2] < first_ele) {
-        return;
-    }
-    var pc2 = lasts[2] - parseInt(first_ele)
+    for(let x=1;x<6;x++){
+        if (lasts[1][x] < first_ele) {
+            continue;
+        }
+        var pc2 = lasts[1][x] - parseInt(first_ele)
+        if (parent && parent.children)
+            var child = parent.children[pc2];
+        if (child)
+            child.classList.add("my-custom-class"+x);
 
-    if (parent && parent.children)
-        var child = parent.children[pc2];
-    if (child)
-        child.classList.add("my-custom-class");
+    }
     
 });
 export function ChangeColor(pc,number,level)
 {   
-    lasts[number] = pc;
+    debugger;
+    lasts[number-1][level] = pc;
     var previoueEle,parent,ele;
     if(number==1)
     {

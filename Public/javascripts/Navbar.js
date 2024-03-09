@@ -9,7 +9,8 @@ const selection = document.querySelector(".selection");
 
 bubble.addEventListener("click", () => {
     setValue1(`#Bubble Sort
-
+    # without  3080 and 5315
+    #with  3080 and 4158
 
     #for(int i=0;i<n-1;i++)
     #{
@@ -22,7 +23,7 @@ bubble.addEventListener("click", () => {
     #    }
     #}
     .data
-    arr: .zero 20
+    arr: .word  20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1  
     base: .word 0
     
     .text 
@@ -87,7 +88,8 @@ bubble.addEventListener("click", () => {
         beq x4 ,x21 ,return #final printing logic...
         lw x15 ,0(x16)
         addi x16 x16 4
-    return:`);
+    return:
+        addi x1 x1 0`);
 })
 
 selection.addEventListener("click", () => {
@@ -169,5 +171,6 @@ selection.addEventListener("click", () => {
               add x16 x16 x1
               sw x21 0(x16)
               j OuterLoop
-     Exit:`);
+     Exit:
+         addi x1 x0 0`);
 })
