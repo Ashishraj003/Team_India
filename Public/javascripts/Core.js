@@ -27,11 +27,13 @@ class Core {
         this.instructions = [];
         this.preforwarding={};
         this.pc = pcs;
-        console.log(pcs);
+        // console.log(pcs);
         this.End=false;
         this.NumberofInstructions=0;
         this.TotalInstuctionsLenght = CoreInstructions.length;
         this.numberofCycles=0;
+        for(let z = 1;z<6;z++)
+            ChangeColor(-1, this.id, z);
         for(let i=0;i<CoreInstructions.length;i++)
         {
             let instruct = new Instruction(CoreInstructions[i]);
@@ -389,7 +391,8 @@ class Core {
         // Assuming format is lw x1 0(x2) -> rd->x1, rs1 -> x2, imd -> 0
         if(instructionObj.imd !=undefined){
 
-            instructionObj.locationOfPull = instructionObj.rsval1/4 + instructionObj.imd/4; 
+            // instructionObj.locationOfPull = instructionObj.rsval1/4 + instructionObj.imd/4; 
+            instructionObj.locationOfPull = instructionObj.rsval1 + instructionObj.imd; 
             // this.NumberofInstructions++;
         }
         else{

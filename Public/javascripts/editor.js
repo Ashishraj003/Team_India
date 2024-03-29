@@ -96,13 +96,12 @@ p1.addEventListener("click", () => {
 });
 p2.addEventListener("click", update);
 function update() {
-    var ele = document.getElementById("mytextarea2").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
-    var first_ele = ele.children[0].innerText - 1;
+    let ele = document.getElementById("mytextarea2").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
+    let first_ele = ele.children[0].innerText - 1;
     if (last[0] < first_ele) {
         return;
     }
-    var pc2 = last[0] - parseInt(first_ele)
-    // debugger;
+    let pc2 = last[0] - parseInt(first_ele);
 
     if (p1)
         var child = p1.children[pc2];
@@ -175,23 +174,16 @@ pscroller2.addEventListener("scroll", ()=>{
     
 });
 export function ChangeColor(pc,number,level)
-{   
-    debugger;
+{
     lasts[number-1][level] = pc;
-    var previoueEle,parent,ele;
-    if(number==1)
+    const Textarea = document.getElementById("mytextarea");
+    if(number!=1)
     {
-        previoueEle = document.getElementById("mytextarea").querySelector(".my-custom-class"+level);
-        parent = document.getElementById("mytextarea").querySelector(".ace_text-layer");
-        ele = document.getElementById("mytextarea").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
+        Textarea = document.getElementById("mytextarea2");
     }
-    else
-    {
-        previoueEle = document.getElementById("mytextarea2").querySelector(".my-custom-class"+level);
-        parent = document.getElementById("mytextarea2").querySelector(".ace_text-layer");
-        ele = document.getElementById("mytextarea2").querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
-    }
-
+    const previoueEle = Textarea.querySelector(".my-custom-class"+level);
+    const parent = Textarea.querySelector(".ace_text-layer");
+    const ele = Textarea.querySelector(".ace_gutter").querySelector(".ace_gutter-layer");
     if (previoueEle)
         previoueEle.classList.remove("my-custom-class"+level);
     // debugger;

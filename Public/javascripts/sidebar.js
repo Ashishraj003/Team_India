@@ -1,3 +1,4 @@
+import {focus} from "./console_.js";
 const button1 = document.querySelector("#side_but1");
 const button2 = document.querySelector("#side_but2");
 const button3 = document.querySelector("#side_but3");
@@ -41,7 +42,7 @@ button4.addEventListener('click', function () {
     cache.style.display = "none";
     memory.style.display = "none";
     consoles.style.display = "block";
-
+    focus();
 })
 
 

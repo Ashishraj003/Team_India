@@ -22,3 +22,8 @@ export function cprint(str, x){
     consoles[x].setHighlightSelectedWord(true);
 }
 
+export function focus(){
+    console1.insert("");
+    console1.insert("");
+}
+
