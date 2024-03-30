@@ -1,7 +1,7 @@
 import Core from "./Core.js"
 import { getValue, EnableEdit, DisableEdit } from "./editor.js";
 import {cprint} from "./console_.js";
-
+import Cache from "./cache.js";
 class Processor {
     constructor() {
         this.memory = [];
@@ -9,12 +9,12 @@ class Processor {
             this.memory.push(0);
         }
         this.clock = 0;
+        this.cache = new Cache();
         this.cores = [new Core(1), new Core(2)];
         this.freeMemInitial = 0;
         this.freeMemfinal = 2 ** 12 - 1;
         this.pcs = [-1, -1]; //pc start
         this.strings = {};
-   
         document.querySelector(".forward_input").addEventListener("click", ()=>{
             if(this.cores[0].EnableForwarding){ 
                 this.cores[0].EnableForwarding=false;
@@ -39,8 +39,8 @@ class Processor {
         this.CoreInstructions[1] = instructSet2;
         this.set(0);
         this.set(1);
-        this.cores[0].Initialize(this.CoreInstructions[0], this.pcs[0]);
-        this.cores[1].Initialize(this.CoreInstructions[1], this.pcs[1]);
+        this.cores[0].Initialize(this.CoreInstructions[0], this.pcs[0],this.cache);
+        this.cores[1].Initialize(this.CoreInstructions[1], this.pcs[1],this.cache);
     }
 
 
@@ -126,8 +126,10 @@ class Processor {
                         }
 
                         while (i < instruct.length) {
-                            if (instruct[i].includes('0x')) {
-                                this.memory[this.freeMemInitial] = parseInt(instruct[i].split('0x')[1], 16);
+                            if (instruct[i].includes('0x1')) {
+                                this.memory[this.freeMemInitial] = parseInt(instruct[i].split('0x1')[1], 16);
+                            // }else if (instruct[i].includes('0x')) {
+                            //     this.memory[this.freeMemInitial] = parseInt(instruct[i].split('0x')[1], 16);
                             } else {
                                 this.memory[this.freeMemInitial] = parseInt(instruct[i], 10);
                             }

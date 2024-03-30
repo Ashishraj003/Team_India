@@ -24,7 +24,7 @@ bubble.addEventListener("click", () => {
     #}
     .data
     arr: .word  20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1  
-    base: .word 0
+    base: .word 0x10000000
     
     .text 
     lw x16 base #intitalizing base address of array to x16
@@ -121,7 +121,7 @@ selection.addEventListener("click", () => {
     #selection sort
     .data
     .word 1,7,3,2,5,4,3,5,1
-    base: .word 0x54
+    base: .word 0x10000054
     
     .text
     addi x1 x0 -4 #i=0

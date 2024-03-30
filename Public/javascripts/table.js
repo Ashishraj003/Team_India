@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-        let addressValue = (currentPage - 1) * 32 * 4;
+        let addressValue = 268435456 + (currentPage - 1) * 32 * 4;
         let index=(currentPage-1)*32;
 
         for (let i = start; i < end; i++) {
@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
             input.type = "text";
             input.value = decimalToHex32Bit(addressValue);
             input.classList.add("col_name");
+            input.readOnly = true;
             td1.appendChild(input);
 
             td1 = document.createElement('td');

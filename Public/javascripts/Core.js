@@ -3,6 +3,7 @@ import {getBus, setBus} from "./Processor.js";
 import {cprint} from "./console_.js";
 import { ChangeColor } from "./editor.js";
 import Predictor from "./Predictor.js";
+import Cache from "./cache.js";
 function IfBranch(type){
     if(type=="bne" || type=="beq" || type=="blt" || type=="bgtu" || type=="bltu" || type=="bgt"){
         return true;
@@ -11,14 +12,12 @@ function IfBranch(type){
 }
 class Core {
     constructor(num) {
-        
         this.id = num;
         this.labels = {};
         this.EnableForwarding=false;
         this.predictor=new Predictor();
-        
     }
-    Initialize(CoreInstructions, pcs)
+    Initialize(CoreInstructions, pcs,cache)
     {
         this.ipc=0;
         this.register = new Array(32).fill(0);
@@ -27,11 +26,16 @@ class Core {
         this.instructions = [];
         this.preforwarding={};
         this.pc = pcs;
+        this.cache = cache;
         // console.log(pcs);
         this.End=false;
         this.NumberofInstructions=0;
+        this.cacheStallCycles=0;
         this.TotalInstuctionsLenght = CoreInstructions.length;
         this.numberofCycles=0;
+        this.cacheStallCycles1=0;
+        this.cacheStallCycles=0;
+
         for(let z = 1;z<6;z++)
             ChangeColor(-1, this.id, z);
         for(let i=0;i<CoreInstructions.length;i++)
@@ -48,7 +52,7 @@ class Core {
     execute() {
         // cprint(this.instructions, this.id-1); //prints instructions on console 
         console.log(this.instructions, this.id, this.pc);
-        
+        this.cache.check();
         while (this.#CheckEmptyLine()){
             this.pc++;
         }
@@ -115,6 +119,32 @@ class Core {
         while(this.#CheckEmptyLine()){
             this.pc++;
         }
+
+        if(this.cacheStallCycles!=0)
+        {
+            this.NumberofStalls++;
+            this.cacheStallCycles--;
+            if(this.cacheStallCycles!=0)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            this.cacheStallCycles = this.cache.fetchVal(this.pc*4);//this handles storage of pc as well as returns stall cycles
+            if(this.cacheStallCycles!=0)
+            {
+                this.NumberofStalls++;
+                this.cacheStallCycles--;
+                if(this.cacheStallCycles!=0)
+                {
+                    return false;
+                }
+            }
+        }
+        this.cacheStallCycles=0;
+        //we will pass the pc to cache and it will return the clock cycles to stall...
+        
         const object = this.InstructionMap[this.pc];
         if(object){
             ChangeColor(object.pc, this.id, 1);
@@ -144,9 +174,6 @@ class Core {
         if(this.instructions[0]==undefined)
             return true;
         //this else if is for pipeline forwardings....
-        if(this.preforwarding[this.instructions[0].rs2]==1 && this.preforwarding[this.instructions[0].rs1]==3 && this.instructions[0].type=='blt'){
-            debugger;
-        }
         ChangeColor(this.instructions[0].pc, this.id, 2);
             if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0){
             if(!this.EnableForwarding)
@@ -203,7 +230,6 @@ class Core {
         if (this.instructions[0].rd)
         {
             if(this.instructions[0].rd==5 && this.instructions[0].type == 'lw'){
-                debugger;
             }
             this.preforwarding[this.instructions[0].rd] = undefined;
         }
@@ -292,8 +318,6 @@ class Core {
                 this.jr(this.instructions[1]);
                 break;
             default:
-                // if (debug)
-                //     console.log("Instruction not found");
                 break;
         }
         if(this.instructions.length>2)
@@ -318,15 +342,42 @@ class Core {
         {
             return true;
         }
+    
         ChangeColor(this.instructions[2].pc, this.id, 4);
+
+        // for cycles/stalls
         if(this.instructions[2].type=="lw" ||this.instructions[2].type=="sw" )
         {
+            
+            if(this.cacheStallCycles1!=0)
+            {
+                this.NumberofStalls++;
+                this.cacheStallCycles1--;
+                if(this.cacheStallCycles1!=0)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                this.cacheStallCycles1 = this.cache.fetchVal(4*(this.instructions[2].locationOfPull+268435456));//this handles storage of pc as well as returns stall cycles
+                if(this.cacheStallCycles1!=0)// 4* because we send byte there not word index
+                {
+                    this.NumberofStalls++;
+                    this.cacheStallCycles1--;
+                    if(this.cacheStallCycles1!=0)
+                    {
+                        return false;
+                    }
+                
+                }
+            }
+            this.cacheStallCycles1=0;
             if(this.instructions[2].type=="lw" )//since we are reading only rs1 we need to check it if its in use or not
             {
                 this.instructions[2].valueAfterExecution = getBus(this.instructions[2].locationOfPull);
                 if(this.EnableForwarding)
                 {
-                    debugger;
                     this.preforwarding[this.instructions[2].rd]=this.instructions[2].valueAfterExecution;
                 }
             }
@@ -386,13 +437,11 @@ class Core {
         instructionObj.valueAfterExecution = instructionObj.rsval1 + instructionObj.imd;
     }
     lw(instructionObj) {
-        // debugger;
-        
         // Assuming format is lw x1 0(x2) -> rd->x1, rs1 -> x2, imd -> 0
         if(instructionObj.imd !=undefined){
 
             // instructionObj.locationOfPull = instructionObj.rsval1/4 + instructionObj.imd/4; 
-            instructionObj.locationOfPull = instructionObj.rsval1 + instructionObj.imd; 
+            instructionObj.locationOfPull = instructionObj.rsval1/4 + instructionObj.imd/4; 
             // this.NumberofInstructions++;
         }
         else{
@@ -451,8 +500,6 @@ class Core {
         if (instructionObj.rsval1 < instructionObj.rsval2) {
             this.branchTaken=true;
             this.pc = this.labels[instructionObj.label];
-        }else{
-            debugger;
         }
     }
     bgeu(instructionObj) {

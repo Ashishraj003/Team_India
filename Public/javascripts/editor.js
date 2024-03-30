@@ -176,7 +176,7 @@ pscroller2.addEventListener("scroll", ()=>{
 export function ChangeColor(pc,number,level)
 {
     lasts[number-1][level] = pc;
-    const Textarea = document.getElementById("mytextarea");
+    let Textarea = document.getElementById("mytextarea");
     if(number!=1)
     {
         Textarea = document.getElementById("mytextarea2");
