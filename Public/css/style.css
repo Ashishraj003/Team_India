@@ -83,7 +83,7 @@ button{
   /* height: 5.34375rem; */
   display: flex;
 }
-.setting_header{
+.setting_header, .table_header{
   height: 10%;
 }
 

@@ -13,6 +13,10 @@ function IfBranch(type){
 class Core {
     constructor(num) {
         this.id = num;
+        this.regUpdateArr = new Array(32);
+        for(let i = 0;i<32;i++){
+            this.regUpdateArr[i] = document.getElementById(`reg${this.id}Text${i}`);
+        }
         this.labels = {};
         this.EnableForwarding=false;
         this.predictor=new Predictor();
@@ -20,13 +24,16 @@ class Core {
     Initialize(CoreInstructions, pcs,cache)
     {
         this.ipc=0;
+        this.fast = false;
         this.register = new Array(32).fill(0);
         this.Active_reg = new Array(32).fill(0);
         this.InstructionMap={};
         this.instructions = [];
         this.preforwarding={};
         this.pc = pcs;
+        this.pcs = pcs;
         this.cache = cache;
+        this.pip_data = [];
         // console.log(pcs);
         this.End=false;
         this.NumberofInstructions=0;
@@ -51,7 +58,6 @@ class Core {
     }
     execute() {
         // cprint(this.instructions, this.id-1); //prints instructions on console 
-        console.log(this.instructions, this.id, this.pc);
         this.cache.check();
         while (this.#CheckEmptyLine()){
             this.pc++;
@@ -62,7 +68,8 @@ class Core {
         }
 
         this.numberofCycles++;
-
+        console.log(this.TotalInstuctionsLenght-this.pcs+1);
+        this.pip_data.push(new Array(this.TotalInstuctionsLenght));
         if(!this.#writeBack())
         {
             return;
@@ -120,6 +127,9 @@ class Core {
             this.pc++;
         }
 
+        this.pip_data[this.pip_data.length-1][this.pc-this.pcs]="IF";
+        if(!this.fast)
+        ChangeColor(this.pc, this.id, 1);
         if(this.cacheStallCycles!=0)
         {
             this.NumberofStalls++;
@@ -144,15 +154,16 @@ class Core {
         }
         this.cacheStallCycles=0;
         //we will pass the pc to cache and it will return the clock cycles to stall...
-        
         const object = this.InstructionMap[this.pc];
         if(object){
-            ChangeColor(object.pc, this.id, 1);
+            
+            
             object.latency_var = object.latency;
             // cprint(object.type, this.id-1);
             // cprint(this.pc, this.id-1);
             
         }
+        
         if(this.instructions.length>0){
             this.instructions[0]=object;
         }else{
@@ -174,6 +185,8 @@ class Core {
         if(this.instructions[0]==undefined)
             return true;
         //this else if is for pipeline forwardings....
+        this.pip_data[this.pip_data.length-1][this.instructions[0].pc-this.pcs]="ID/Rf";
+        if(!this.fast)
         ChangeColor(this.instructions[0].pc, this.id, 2);
             if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0){
             if(!this.EnableForwarding)
@@ -250,6 +263,8 @@ class Core {
         if(this.instructions[1]==undefined)
             return true;
         //
+        this.pip_data[this.pip_data.length-1][this.instructions[1].pc-this.pcs]="EXE";
+        if(!this.fast)
         ChangeColor(this.instructions[1].pc, this.id, 3);
         const instructionObj = this.instructions[1];
 
@@ -342,7 +357,9 @@ class Core {
         {
             return true;
         }
-    
+        this.pip_data[this.pip_data.length-1][this.instructions[2].pc-this.pcs]="MEM";
+
+        if(!this.fast)
         ChangeColor(this.instructions[2].pc, this.id, 4);
 
         // for cycles/stalls
@@ -406,10 +423,13 @@ class Core {
             return true;
         }
         this.NumberofInstructions++;
+        this.pip_data[this.pip_data.length-1][this.instructions[3].pc-this.pcs]="WB";
+
+        if(!this.fast)
         ChangeColor(this.instructions[3].pc, this.id, 5);
         const instructionObj = this.instructions[3];
         if (instructionObj.rd) {
-            const regUpdate = document.getElementById(`reg${this.id}Text${instructionObj.rd}`);
+            const regUpdate = this.regUpdateArr[instructionObj.rd];
             regUpdate.value = instructionObj.valueAfterExecution;
             this.register[instructionObj.rd] = instructionObj.valueAfterExecution;
         }  

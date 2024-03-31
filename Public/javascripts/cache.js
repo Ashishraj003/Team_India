@@ -12,7 +12,7 @@ class Cache{
         this.blockSize = 8; // 8 bytes in 1 block (2 words)....
         this.numberOfSets = this.size/(this.associativity*this.blockSize);// # of sets in cache
         this.fetchMap = new Map();
-        this.memoryLatency = 1;
+        this.memoryLatency = 2;
         this.storage = new Array(this.numberOfSets*this.associativity);//to store blocks..(arr of blocks)
         // this.priority = new Array(this.numberOfSets*this.associativity);//to store priority of each block
         this.cacheLatency = 1;

@@ -22,8 +22,8 @@
       <div class = "setOut"></div>
       <div class = "set_align">
       <div class = "setting_header">
-        <a href="javascript:" class="Settings_btn">SETTINGS</a>
-        <a href="javascript:" class = "close_set">CLOSE</a>
+        <a href="javascript:" class="Settings_btn btn_type2">SETTINGS</a>
+        <a href="javascript:" class = "close_set btn_type1">CLOSE</a>
       </div>
       <div class = "setting_holder">
        
@@ -71,6 +71,40 @@
     </div>
       </div>
     </div>
+    <div class = "Pipe-Table">
+      <div class = "Pipe-table_holder">
+      <div class = "table_header">
+        <a href="javascript:" class="Tables_btn btn_type2">TABLE</a>
+        <a href="javascript:" class = "close_tab btn_type1">CLOSE</a>
+      </div>
+      
+      
+      <div class = "table_holder">
+        <div class = "t_sidebar">
+          <button id="t_side_but1" class="side_button">Core1</button>
+          <button id="t_side_but2" class="side_button">Core2</button>
+      </div>
+        <div class = "t_marker">
+
+        </div>
+        <div id = "pipeline_table">
+          <div id="root">
+            <table>
+            <% for(let i=0;i<=10;i++) { %>
+              <tr>
+                <% for(let j=0;j<=18;j++) { %>
+                    <td><button class="b2" id="pipe-<%=i%>,<%=j%>">y<%= i %></button></td>
+                  <% } %>
+              </tr>
+              <% } %>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    </div>
+    </div>
     <!-- first header for file edit buttons -->
     <nav id="mainNavbar" class="navbar navbar-dark  navbar-expand-md py-0 fixed-top">
       <a href="#" class="navbar-brand Simulatorbtn">SIMULATOR</a>
@@ -95,6 +129,9 @@
           </li>
           <li class="nav-item">
             <a href="javascript:" class="nav-link show_set">SETTINGS</a>
+          </li>
+          <li class="nav-item">
+            <a href="javascript:" class="nav-link show_tab">TABLE</a>
           </li>
         </ul>
       </div>
@@ -219,8 +256,7 @@
         </div>
         <!-- cache_holder -->
         <div class="cache_holder" id="cache_id" style="display: none">
-
-
+          
         </div>
 
 
@@ -266,7 +302,9 @@
     <script src="/javascripts/register.js"></script>
     <script type="module" src="/javascripts/Navbar.js"></script>
     <script type="module" src="/javascripts/sidebar.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.5.3/ace.js"></script>
+    <script type="module" src="/javascripts/diagram.js"></script>
     <script type="module" src="/javascripts/editor.js"></script>
     <script type="module" src="/javascripts/Processor.js"></script>
     <script type="module" src="/javascripts/table.js"></script>

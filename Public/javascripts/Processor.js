@@ -2,6 +2,7 @@ import Core from "./Core.js"
 import { getValue, EnableEdit, DisableEdit } from "./editor.js";
 import {cprint} from "./console_.js";
 import Cache from "./cache.js";
+import {update} from "./diagram.js";
 class Processor {
     constructor() {
         this.memory = [];
@@ -45,7 +46,7 @@ class Processor {
 
 
 
-    set(x) {// labels handelled
+    set(x) {// labels handelled here
         /*
             base: 
             arr: .zero 80 -> done!!!
@@ -159,7 +160,9 @@ class Processor {
         }
     }
     play() {
-        
+        this.cores[0].fast = true;
+        this.cores[1].fast = true;
+
         // debugger;
         while (!this.cores[0].End || !this.cores[1].End) {
             this.run();
@@ -175,6 +178,8 @@ class Processor {
         
         cprint("the value of IPC is: "+this.cores[0].ipc+"\nThe value of CPI is: "+1/this.cores[0].ipc,0);
         cprint("the value of IPC is: "+this.cores[1].ipc+"\nThe value of CPI is: "+1/this.cores[1].ipc,1);
+        update(this.cores[0].pip_data, this.cores[0].pcs);
+        console.log(this.cores[0].pip_data);
     }
     setmem(value, address) {
         this.memory[address] = value;
@@ -182,7 +187,6 @@ class Processor {
     getmem(address) {
         return this.memory[address];
     }
-
 
     //  remove "," " " and return array of instructions  
     #split(s) {
@@ -211,7 +215,8 @@ const s = document.querySelector('#mytextarea');
 const p = new Processor();
 const run = document.querySelector(".Run");
 const step = document.querySelector(".Step_fd");
-
+const reset = document.querySelector(".reset");
+const edt = document.querySelector(".editBtn");
 
 function initialization() {
     const a1 = getValue(1);
@@ -221,9 +226,6 @@ function initialization() {
     p.init(alist1, alist2);
 }
 
-
-const reset = document.querySelector(".reset");
-const edt = document.querySelector(".editBtn");
 edt.addEventListener("click", () => {
     initialization();
     EnableEdit();
@@ -254,6 +256,12 @@ export function setBus(address, value) {
 }
 export function getBus(address) {
     return p.getmem(address);
+}
+export function getpipeline(id){
+    return p.cores[id].pip_data;
+}
+export function getpcs(id){
+    return p.cores[id].pcs;
 }
 export function getHexMem(address, byte) {
     // Convert the decimal number to hexadecimal
