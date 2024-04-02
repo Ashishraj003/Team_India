@@ -54,7 +54,7 @@ class Core {
                 continue;
             }
             this.InstructionMap[i]=instruct;
-        }
+        } 
     }
     execute() {
         // cprint(this.instructions, this.id-1); //prints instructions on console 

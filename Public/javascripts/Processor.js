@@ -3,6 +3,7 @@ import { getValue, EnableEdit, DisableEdit } from "./editor.js";
 import {cprint} from "./console_.js";
 import Cache from "./cache.js";
 import {update} from "./diagram.js";
+
 class Processor {
     constructor() {
         this.memory = [];

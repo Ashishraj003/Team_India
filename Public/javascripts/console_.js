@@ -9,8 +9,8 @@ const console1 = ace.edit(document.querySelector("#console1"), {
 console1.setReadOnly(true);
 console2.setReadOnly(true);
 const consoles = [console1, console2];
-console1.insert("Read Only\n");
-console2.insert("Read Only\n");
+// console1.insert("Read Only\n");
+// console2.insert("Read Only\n");
 
 export function cprint(str, x){
     const lastRow = consoles[x].session.getLength() - 1;
