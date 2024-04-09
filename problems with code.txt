@@ -1,3 +1,1 @@
 1) fetch empty line
-2) Core 1 cor2 2 instuction
-3) mem ke instruction fetch nahi kar raha

@@ -55,7 +55,7 @@ class Core {
             {
                 continue;
             }
-            this.InstructionMap[j++]=instruct;
+            this.InstructionMap[i]=instruct;
         } 
     }
     execute() {

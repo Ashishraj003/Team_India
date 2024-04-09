@@ -12,8 +12,9 @@ class Cache{
         this.blockSize = 8; // 8 bytes in 1 block (2 words)....
         this.numberOfSets = this.size/(this.associativity*this.blockSize);// # of sets in cache
         this.fetchMap = new Map();
-        this.memoryLatency = 2;
+        this.memoryLatency = 10;
         this.storage = new Array(this.numberOfSets*this.associativity);//to store blocks..(arr of blocks)
+        // this.latency_arr = new Array(this.numberOfSets*this.associativity);
         // this.priority = new Array(this.numberOfSets*this.associativity);//to store priority of each block
         this.cacheLatency = 1;
         this.replacementPolicy=0;
@@ -80,7 +81,7 @@ class Cache{
 
         if(this.fetchMap[blockNumber]==undefined)  //block present or not.
         {
-            this.storeVal(index);     
+            // this.storeVal(index);     
             return this.memoryLatency;
         }
         else
@@ -96,12 +97,16 @@ class Cache{
 
     storeVal(index)
     {
-        // initially mai hi block size /4 karna hoga input lene ke samay.( because memory is in multiples of 4(addresses) same scheme followed for pc... 4 bytes in 1 word)
+        
+        // initially mai hi block size /4 karna hoga input le0ne ke samay.( because memory is in multiples of 4(addresses) same scheme followed for pc... 4 bytes in 1 word)
         // i can get a pc or a memory address  in val
         let block_size = this.blockSize/4;
         let wordNumber = index/4;//just to show that it does'nt matter even if we do val/block_size
         let setNumber = this.#blockNum(index)%this.numberOfSets;
         let firstBlockIndex = setNumber*this.associativity;
+        if(this.fetchMap[this.#blockNum(index)]!=undefined){
+            return;
+        }
         for(let i = 0; i < this.associativity; i++)//7p
         {
             if(this.storage[ firstBlockIndex + i ]==0)//under Review...
