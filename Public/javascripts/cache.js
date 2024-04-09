@@ -28,42 +28,44 @@ class Cache{
     LRU_Policy(val)
     {
         
-        val=this.#firstblock(val); //val=this.#firstblocj(index) of fetchVal
-        let setNumber = this.#firstblock(val)%this.numberOfSets; 
-        this.fetchMap[this.storage[setNumber*this.associativity]] = undefined;
-        for(let i = 1; i < this.associativity; i++)
+        val=this.#blockNum(val);//assigning it its block number
+        let setNumber = this.#blockNum(val)%this.numberOfSets; 
+        this.fetchMap[this.storage[setNumber*this.associativity]] = undefined;//putting the LRU block to undefined
+        //since it is evicted so next time the cpu requests this block(the lru block) the fetchmap should say its not there
+        for(let i = 1; i < this.associativity; i++)//iterating over the set and creating space for MRU by shifting each block left
         {
             this.storage[ setNumber*this.associativity + i - 1] = this.storage[ setNumber*this.associativity + i];
         }
-        this.fetchMap[val]=1;
-        this.storage[ (setNumber+1)*this.associativity - 1] = val+1;
-
+        this.fetchMap[val]=1;//telling the Cache that this block exits in cache...
+        this.storage[ (setNumber+1)*this.associativity - 1] = val+1;//assigning the MRU part of cache to curr block index+1
+        //remember our cache has this design LRU ------ MRU ie LRU block is at left most and MRU rightMost in a set.
     }
-    RR_Policy(val){
-        let ran = Math.floor(Math.random() * (this.associativity));
-        this.fetchMap[this.storage[ (setNumber)*this.associativity + ran]] = undefined;
-        this.storage[ (setNumber)*this.associativity + ran] = this.#firstblock(val);
-        this.fetchMap[this.#firstblock(val)]=1;
+    RR_Policy(val){//random replacement policy...
+        let ran = Math.floor(Math.random() * (this.associativity));//gives an index between 0 to associativity -1...
+        this.fetchMap[this.storage[ (setNumber)*this.associativity + ran]] = undefined;//randomly evicting the block
+        this.storage[ (setNumber)*this.associativity + ran] = this.#blockNum(val);//assigning that specific random location to new incoming block
+        this.fetchMap[this.#blockNum(val)]=1;// telling the cache that the block exists...
     }
     
     UpdateLRU(index)
     {
         debugger;
-        let old=this.#firstblock(index);
-        let setNumber = this.#firstblock(index)%this.numberOfSets;
+        let old=this.#blockNum(index);
+        let setNumber = this.#blockNum(index)%this.numberOfSets;
         let flag = 0;
-        // this.fetchMap[this.#firstblock(index)]=1;
+        let firstBlockIndex = setNumber*this.associativity;
+        // (LeftMost)LRU......MRU(rightMost)
         for(let i = 0; i < this.associativity; i++)
         {
-            if(this.storage[setNumber*this.associativity + i]==0)
+            if(this.storage[firstBlockIndex + i]==0)//means the block was already MRU
             {
-                this.storage[ setNumber*this.associativity+i-1]=old+1;
+                this.storage[ firstBlockIndex+i-1]=old+1; //so nothing to do....
                 return ;
             }
             if(flag == 1){
-                this.storage[ setNumber*this.associativity + i -1] = this.storage[ setNumber*this.associativity + i];
+                this.storage[ firstBlockIndex + i -1] = this.storage[ firstBlockIndex + i];
             }
-            else if(this.storage[ setNumber*this.associativity + i ]== old+1){
+            else if(this.storage[ firstBlockIndex + i ]== old+1){
                 flag = 1;
             }
         }
@@ -71,11 +73,10 @@ class Cache{
     }
 
 
-    fetchVal(index)//returns clock cycles (stalls)
+    fetchVal(index)//returns latency
     {
         debugger;
-        let val = index/4;// as pc / memory address are multiples of 4 (pc will be sent from back as pc*4)
-        let blockNumber = Math.floor(index/(this.blockSize)); // gives the blockNumber to fetch from...
+        let blockNumber = this.#blockNum(index); // gives the blockNumber to fetch from...
 
         if(this.fetchMap[blockNumber]==undefined)  //block present or not.
         {
@@ -99,19 +100,22 @@ class Cache{
         // i can get a pc or a memory address  in val
         let block_size = this.blockSize/4;
         let wordNumber = index/4;//just to show that it does'nt matter even if we do val/block_size
-        let setNumber = this.#firstblock(index)%this.numberOfSets;
+        let setNumber = this.#blockNum(index)%this.numberOfSets;
+        let firstBlockIndex = setNumber*this.associativity;
         for(let i = 0; i < this.associativity; i++)//7p
         {
-            if(this.storage[ setNumber*this.associativity + i ]==0)//under Review...
+            if(this.storage[ firstBlockIndex + i ]==0)//under Review...
             {
-                this.fetchMap[this.#firstblock(index)]=1;
-                this.storage[ setNumber*this.associativity + i ] = this.#firstblock(index)+1;
+                this.fetchMap[this.#blockNum(index)]=1;
+                this.storage[ firstBlockIndex + i ] = this.#blockNum(index)+1;
                 return this.memoryLatency;
             }
         }
+        //it comes here if it doesnt return ... ie it didnt find any free space....
+        //time to use cache replacement policy..
         if(this.replacementPolicy==0)
         {
-            this.LRU_Policy(index);   
+            this.LRU_Policy(index);
         }
         else
         {
@@ -119,19 +123,7 @@ class Cache{
         }
         return this.memoryLatency;
     }
-    storeResult(setNumber,index)
-    {
-        this.storage[ setNumber*this.associativity + i ] = true;//sets that block to be occupied....
-        let block_size = this.blockSize/4;
-        let blockNumber = Math.floor(index/block_size);
-        //block_size = this.blockSize/4; which gives number of words we can store in each block..
-        // so we make sure we store nearby pc/ address too!! (spacial locality)
-        for(let i=0;i<block_size;i++)
-        {
-            this.fetchMap[blockNumber+i] = index+i;
-        }
-    }
-    #firstblock(index){
+    #blockNum(index){
         return Math.floor(index/(this.blockSize));
     }
 }
