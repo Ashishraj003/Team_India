@@ -22,6 +22,8 @@ class Cache{
         {
             this.storage[i] = 0;
         }
+        this.acceses=0;
+        this.misses=0;
     }
     check(){
         console.log(this.storage);
@@ -76,12 +78,15 @@ class Cache{
 
     fetchVal(index)//returns latency
     {
-        debugger;
+        this.acceses++;
         let blockNumber = this.#blockNum(index); // gives the blockNumber to fetch from...
 
         if(this.fetchMap[blockNumber]==undefined)  //block present or not.
         {
-            // this.storeVal(index);     
+            // this.storeVal(index); 
+            //we will store val at the end of 100 cycles!! \ (code is there in Core class(for storing val...))
+            // not just now since the other processor should not see the value appearing in cache before 100cycles otherwise inconsistency will come in.
+            this.misses++;
             return this.memoryLatency;
         }
         else
@@ -100,6 +105,7 @@ class Cache{
         
         // initially mai hi block size /4 karna hoga input le0ne ke samay.( because memory is in multiples of 4(addresses) same scheme followed for pc... 4 bytes in 1 word)
         // i can get a pc or a memory address  in val
+        this.acceses++;
         let block_size = this.blockSize/4;
         let wordNumber = index/4;//just to show that it does'nt matter even if we do val/block_size
         let setNumber = this.#blockNum(index)%this.numberOfSets;
@@ -107,6 +113,7 @@ class Cache{
         if(this.fetchMap[this.#blockNum(index)]!=undefined){
             return;
         }
+        this.misses++;
         for(let i = 0; i < this.associativity; i++)//7p
         {
             if(this.storage[ firstBlockIndex + i ]==0)//under Review...
