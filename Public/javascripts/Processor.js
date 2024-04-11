@@ -192,9 +192,9 @@ class Processor {
         update(this.cores[0].pip_data, this.cores[0].pcs);
         createTable(this.cache.storage);
         if(this.cache.acceses != 0){
-            document.querySelector("#miss").value = "No. of misses : " + (this.cache.misses);
-            document.querySelector("#access").value = "No. of access : " + (this.cache.acceses);
-            document.querySelector("#missrate").value = "No. of misses : " + (this.cache.acceses/this.cache.misses);
+            document.querySelector("#miss").innerText = "No. of misses : " + (this.cache.misses);
+            document.querySelector("#access").innerText = "No. of access : " + (this.cache.acceses);
+            document.querySelector("#missrate").innerText = "No. of misses : " + (this.cache.acceses/this.cache.misses);
         }
         // console.log(this.cores[0].pip_data);
         console.log(this.cache.storage);
