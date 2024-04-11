@@ -140,7 +140,7 @@
     height: 90%;
     background-color: #212121;
   }
-  .s_latency{
+  .s_latency, .s_cache{
     /* display: flex; */
     margin-top: 10%;
     height: inherit;
@@ -170,9 +170,26 @@
     width: 8%;
     /* margin-right: 5%; */
   }
-  #latency_input{
+  #latency_input, #cache_size_input{
     background-color: #999999;
     /* margin-right: 1%; */
+  }
+  .s_cache_holder{
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto auto;
+    row-gap: 1.5px;
+    /* column-width: inherit; */
+    column-gap: 1%;
+  }
+  .s_latency_holder{
+    display: grid;
+    grid-template-columns: auto auto;
+    row-gap: 1.5px;
+    column-gap: 1%;
+  }
+  .s_cache{
+    display: none;
   }
 .btn_type1 {
     right: 60%;
@@ -527,3 +544,59 @@
   }
 
   /* -----------END--------- */
+
+
+
+
+
+
+
+/* CSS for CACHE */
+  .b7{
+    color: white;
+    /* White text */
+    cursor: pointer;
+    /* Pointer/hand icon */
+    display: block;
+    background-color: #a52a2a;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 0.7625rem;
+    /* border: none; */
+    
+  
+    /* me2 */
+    padding: 0rem;
+    width:8rem;
+    height: 2rem;
+    border: 0.0625rem solid black;
+}
+.b71{
+  color: white;
+    /* White text */
+    cursor: pointer;
+    /* Pointer/hand icon */
+    display: block;
+    background-color: #a52a2a;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 0.7625rem;
+    /* border: none; */
+    
+  
+    /* me2 */
+    padding: 0rem;
+    width:18rem;
+    height: 2rem;
+    border: 0.0625rem solid black;
+}
+#cache_table_root{
+  gap: 4rem;
+  display: flex;
+}

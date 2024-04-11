@@ -37,7 +37,7 @@
       </div>
       <div>
       <div class = "s_latency">
-        <div>
+        <div >
           <label>Choose a Instruction:</label>
           <select id="latency_input" name="latencies">
             <option value="add">add</option>
@@ -59,13 +59,60 @@
             <option value="jr">jr</option>
         </select>
         </div>
-        <div>
-          <label>Latency:  </label>
-          <input type="number" id="latencyVal" name="quantity" min="1" max="20">
+        <div class = "s_latency_holder">
+          <label>Latency  :</label>
+          <input type="number" id="latencyVal" name="quantity" min="1" max="100">
       </div>
       </div>
       <div class="s_cache">
-        
+        <div class = "s_cache_holder">
+          <label>Cache size  :</label>
+          <select id="cache_size_input" name="cache_size">
+            <option value="64">64 bytes</option>
+            <option value="128">128 bytes</option>
+            <option value="256">256 bytes</option>
+            <option value="512">512 bytes</option>
+            <option value="1024">1024 bytes</option>
+            <option value="2048">2048 bytes</option>
+        </select>
+        <!-- </div> -->
+        <!-- <div> -->
+          <label>Block size  :</label>
+          <select id="block_size_input" name="block_size">
+            <option value="4">4 bytes</option>
+            <option value="8">8 bytes</option>
+            <option value="16">16 bytes</option>
+            <option value="32">32 bytes</option>
+            <option value="64">64 bytes</option>
+          </select>
+        <!-- </div> -->
+        <!-- <div> -->
+          <label>Associativity :</label>
+          <select id="associativity" name="Associativity">
+            <option value="100">Direct Associative</option>
+            <option value="32">32 Way Associativity</option>
+            <option value="16">16 Way Associativity</option>
+            <option value="8">8 Way Associativity</option>
+            <option value="4">4 Way Associativity</option>
+            <option value="2">2 Way Associativity</option>
+            <option value="1">Fully Associativity</option>
+          </select>
+        <!-- </div> -->
+        <!-- <div> -->
+          <label>Policy :</label>
+          <select id="policy" name="Policy">
+            <option value="0">LRU</option>
+            <option value="1">Random</option>
+          </select>
+        <!-- </div> -->
+        <!-- <div> -->
+          <label>Memory Latency :</label>
+          <input type="number" id="mem_latencyVal" name="quantity" min="1" max="200">
+        <!-- </div> -->
+        <!-- <div> -->
+          <label>Cache Latency    :</label>
+          <input type="number" id="cache_latencyVal" name="quantity" min="1" max="100">
+        </div>
       </div>
       </div>
     </div>
@@ -256,7 +303,28 @@
         </div>
         <!-- cache_holder -->
         <div class="cache_holder" id="cache_id" style="display: none">
-          
+          <div id = "cache_table_root">
+          <table>
+            <% for(let i=0;i<=10;i++) { %>
+              <tr>
+                <% for(let j=0;j<=1;j++) { %>
+                    <td><button class="b7" id="cache-<%=i%>,<%=j%>"></button></td>
+                  <% } %>
+              </tr>
+              <% } %>
+            </table>
+            <table>
+                <tr>
+                    <td><button class="b71" id="miss"></button></td>
+                </tr>
+                <tr>
+                  <td><button class="b71" id="access"></button></td>
+              </tr>
+              <tr>
+                <td><button class="b71" id="missrate"></button></td>
+            </tr>
+              </table>
+          </div>
         </div>
 
 
@@ -309,7 +377,6 @@
     <script type="module" src="/javascripts/Processor.js"></script>
     <script type="module" src="/javascripts/table.js"></script>
     <script type="module" src="/javascripts/SettingsEditor.js"></script>
-    <script type="module" src="/javascripts/Message.js"></script>
 
   </body>
 

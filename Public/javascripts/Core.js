@@ -1,11 +1,11 @@
 import Instruction from "./Instruction.js";
-import {getBus, setBus} from "./Processor.js";
-import {cprint} from "./console_.js";
+import { getBus, setBus } from "./Processor.js";
+import { cprint } from "./console_.js";
 import { ChangeColor } from "./editor.js";
 import Predictor from "./Predictor.js";
 import Cache from "./cache.js";
-function IfBranch(type){
-    if(type=="bne" || type=="beq" || type=="blt" || type=="bgtu" || type=="bltu" || type=="bgt"){
+function IfBranch(type) {
+    if (type == "bne" || type == "beq" || type == "blt" || type == "bgtu" || type == "bltu" || type == "bgt") {
         return true;
     }
     return false;
@@ -14,266 +14,238 @@ class Core {
     constructor(num) {
         this.id = num;
         this.regUpdateArr = new Array(32);
-        for(let i = 0;i<32;i++){
+        for (let i = 0; i < 32; i++) {
             this.regUpdateArr[i] = document.getElementById(`reg${this.id}Text${i}`);
         }
         this.labels = {};
-        this.EnableForwarding=false;
-        this.predictor=new Predictor();
+        this.EnableForwarding = false;
+        this.predictor = new Predictor();
     }
-    Initialize(CoreInstructions, pcs,cache)
-    {
-        this.ipc=0;
+    Initialize(CoreInstructions, pcs, cache) {
+        this.ipc = 0;
         this.fast = false;
         this.register = new Array(32).fill(0);
         this.Active_reg = new Array(32).fill(0);
-        this.line_no={};
-        this.InstructionMap={};
+        this.line_no = {};
+        this.InstructionMap = {};
         this.instructions = [];
-        this.preforwarding={};
+        this.preforwarding = {};
         this.pc = 0;
         this.pcs = pcs;
         this.cache = cache;
         this.pip_data = [];
         // console.log(pcs);
-        this.End=false;
-        this.NumberofInstructions=0;
-        this.cacheStallCycles=0;
+        this.End = false;
+        this.NumberofInstructions = 0;
+        this.cacheStallCycles = 0;
         this.TotalInstuctionsLenght = CoreInstructions.length;
-        this.numberofCycles=0;
-        this.cacheStallCycles1=0;
-        this.cacheStallCycles=0;
-
-        for(let z = 1;z<6;z++)
+        this.numberofCycles = 0;
+        this.cacheStallCycles1 = 0;
+        this.cacheStallCycles = 0;
+        this.mappc = {};
+        for (let z = 1; z < 6; z++)
             ChangeColor(-1, this.id, z);
         let j = 0;
-        for(let i=0;i<CoreInstructions.length;i++)
-        {
+        for (let i = 0; i < CoreInstructions.length; i++) {
             let instruct = new Instruction(CoreInstructions[i]);
             instruct.pc = i;
-            if(instruct.type==undefined)
-            {
+            if (instruct.type == undefined) {
                 continue;
             }
-            this.InstructionMap[j++]=instruct;
-        } 
+            this.mappc[i] = j;
+            this.InstructionMap[j++] = instruct;
+        }
     }
     execute() {
         // cprint(this.instructions, this.id-1); //prints instructions on console 
-        this.cache.check();
-        while (this.#CheckEmptyLine()){
+        // this.cache.check();
+        while (this.#CheckEmptyLine()) {
             this.pc++;
         }
         this.End = this.#CheckEnd();
-        if (this.End) 
-        {
+        if (this.End) {
             return;
         }
-         
+
         this.numberofCycles++;
-        console.log(this.TotalInstuctionsLenght-this.pcs+1);
+        // console.log(this.TotalInstuctionsLenght - this.pcs + 1);
         this.pip_data.push(new Array(this.TotalInstuctionsLenght));
-        if(!this.#writeBack())
-        {
+        if (!this.#writeBack()) {
             return;
         }
-        if(!this.#Memory())
-        {
+        if (!this.#Memory()) {
             return;
         }
-        if(!this.#execute())
-        {
+        if (!this.#execute()) {
             return;
         }
-        if(this.branchTaken)
-        {
-            this.branchTaken=false;
-            this.instructions[0]=undefined;
+        if (this.branchTaken) {
+            this.branchTaken = false;
+            this.instructions[0] = undefined;
             // this.NumberofInstructions++;
             return;
         }
-        if(!this.#DecodeRegisterFetch())
-        {
+        if (!this.#DecodeRegisterFetch()) {
             return;
         }
-        if(!this.#InstructionFetch())
-        {
+        if (!this.#InstructionFetch()) {
             return;
         }
-        
+
         this.pc++;
-        this.End = this.#CheckEnd(); 
-        
+        this.End = this.#CheckEnd();
+
     }
-    #CheckEmptyLine()
-    {
-        if(this.TotalInstuctionsLenght>this.pc && this.InstructionMap[this.pc]==undefined)
-        {
+    #CheckEmptyLine() {
+        if (this.TotalInstuctionsLenght > this.pc && this.InstructionMap[this.pc] == undefined) {
             return true;
         }
         return false;
     }
-    #CheckEnd(){
-        if(this.TotalInstuctionsLenght>this.pc) return false;
-        for(let i=0;i<this.instructions.length;i++)
-        {
-            if(this.instructions[i]!=undefined)
-            {
+    #CheckEnd() {
+        if (this.TotalInstuctionsLenght > this.pc) return false;
+        for (let i = 0; i < this.instructions.length; i++) {
+            if (this.instructions[i] != undefined) {
                 return false;
             }
         }
         return true;
     }
-    #InstructionFetch(){
-        while(this.#CheckEmptyLine()){
+    #InstructionFetch() {
+        while (this.#CheckEmptyLine()) {
             this.pc++;
         }
 
-        
+
         const object = this.InstructionMap[this.pc];
-        if(object){
-            
-            
+        if (object) {
+
+
             object.latency_var = object.latency;
             // cprint(object.type, this.id-1);
             // cprint(this.pc, this.id-1);
-            this.pip_data[this.pip_data.length-1][object.pc]="IF";
-            if(!this.fast)
+            this.pip_data[this.pip_data.length - 1][object.pc - this.pcs] = "IF";
+            if (!this.fast)
                 ChangeColor(object.pc, this.id, 1);
         }
-        
-        if(this.cacheStallCycles!=0)
-        {
+
+        if (this.cacheStallCycles != 0) {
             this.NumberofStalls++;
             this.cacheStallCycles--;
-            if(this.cacheStallCycles!=0)
-            {
+            if (this.cacheStallCycles != 0) {
                 return false;
             }
         }
-        else
-        {
-            this.cacheStallCycles = this.cache.fetchVal(this.pc*4 + (this.id-1)*16777216);//this handles storage of pc as well as returns stall cycles
-            if(this.cacheStallCycles!=0)
-            {
+        else {
+            this.cacheStallCycles = this.cache.fetchVal(this.pc * 4 + (this.id - 1) * 16777216);//this handles storage of pc as well as returns stall cycles
+            this.cache.storeVal(this.pc * 4 + (this.id - 1) * 16777216);
+            if (this.cacheStallCycles != 0) {
                 this.NumberofStalls++;
                 this.cacheStallCycles--;
-                if(this.cacheStallCycles!=0)
-                {
+                if (this.cacheStallCycles != 0) {
                     return false;
                 }
             }
         }
-        this.cacheStallCycles=0;
+        this.cacheStallCycles = 0;
         //we will pass the pc to cache and it will return the clock cycles to stall...
-        this.cache.storeVal(this.pc*4 + (this.id-1)*16777216);
-        
-        if(this.instructions.length>0){
-            this.instructions[0]=object;
-        }else{
+        this.cache.storeVal(this.pc * 4 + (this.id - 1) * 16777216);
+
+        if (this.instructions.length > 0) {
+            this.instructions[0] = object;
+        } else {
             this.instructions.push(object);
         }
-        if(this.instructions[0]!=undefined && IfBranch(this.instructions[0].type))
-        {
-            if(this.predictor.predict(this.pc))//branch taken
+        if (this.instructions[0] != undefined && IfBranch(this.instructions[0].type)) {
+            if (this.predictor.predict(this.pc))//branch taken
             {
-                this.pc = this.labels[this.instructions[0].label];
+                this.pc = this.#pcfinder(this.labels[this.instructions[0].label]);
             }
         }
-        return  true;
+        return true;
     }
-    #DecodeRegisterFetch(){
-        let reg1=0;
-        let reg2=0;
-        
-        if(this.instructions[0]==undefined)
+    #DecodeRegisterFetch() {
+        let reg1 = 0;
+        let reg2 = 0;
+
+        if (this.instructions[0] == undefined)
             return true;
         //this else if is for pipeline forwardings....
-        this.pip_data[this.pip_data.length-1][this.instructions[0].pc]="ID/Rf";
-        if(!this.fast)
-        ChangeColor(this.instructions[0].pc, this.id, 2);
-            if(this.instructions[0].rs1!=undefined && this.Active_reg[this.instructions[0].rs1]!=0){
-            if(!this.EnableForwarding)
-            {
+        this.pip_data[this.pip_data.length - 1][this.instructions[0].pc - this.pcs] = "ID/Rf";
+        if (!this.fast)
+            ChangeColor(this.instructions[0].pc, this.id, 2);
+        if (this.instructions[0].rs1 != undefined && this.Active_reg[this.instructions[0].rs1] != 0) {
+            if (!this.EnableForwarding) {
                 this.NumberofStalls++;
                 return false;
             }
-            else
-            {
-                if(this.preforwarding[this.instructions[0].rs1]!=undefined)
-                {
+            else {
+                if (this.preforwarding[this.instructions[0].rs1] != undefined) {
                     this.instructions[0].rsval1 = this.preforwarding[this.instructions[0].rs1];
                     reg1++;
                 }
-                else
-                {
+                else {
                     this.NumberofStalls++;
                     return;
                 }
             }
         }
-        if(this.instructions[0].rs2!=undefined && this.Active_reg[this.instructions[0].rs2]!=0){
-            if(!this.EnableForwarding)
-            {
+        if (this.instructions[0].rs2 != undefined && this.Active_reg[this.instructions[0].rs2] != 0) {
+            if (!this.EnableForwarding) {
                 this.NumberofStalls++;
                 return false;
             }
-            else
-            {
-                if(this.preforwarding[this.instructions[0].rs2]!=undefined)
-                {
+            else {
+                if (this.preforwarding[this.instructions[0].rs2] != undefined) {
                     this.instructions[0].rsval2 = this.preforwarding[this.instructions[0].rs2];
                     reg2++;
                 }
-                else
-                {
+                else {
                     this.NumberofStalls++;
                     return;
                 }
             }
         }
 
-        if(this.instructions[0].rs1!=undefined && reg1==0 ){
+        if (this.instructions[0].rs1 != undefined && reg1 == 0) {
 
             this.instructions[0].rsval1 = this.register[this.instructions[0].rs1];
             reg1++;
         }
-        if(this.instructions[0].rs2 !=undefined && reg2==0 )
-        {
+        if (this.instructions[0].rs2 != undefined && reg2 == 0) {
             this.instructions[0].rsval2 = this.register[this.instructions[0].rs2];
             reg2++;
         }
         // to remove from forwadding
-        if (this.instructions[0].rd)
-        {
-            if(this.instructions[0].rd==5 && this.instructions[0].type == 'lw'){
+        if (this.instructions[0].rd) {
+            if (this.instructions[0].rd == 5 && this.instructions[0].type == 'lw') {
             }
             this.preforwarding[this.instructions[0].rd] = undefined;
         }
 
-        if(this.instructions.length>1){
-            this.instructions[1]=this.instructions[0];
+        if (this.instructions.length > 1) {
+            this.instructions[1] = this.instructions[0];
         }
-        else{
+        else {
             this.instructions.push(this.instructions[0]);
         }
         //
-        
-        this.instructions[0]=undefined;
+
+        this.instructions[0] = undefined;
         return true;
-        
+
     }
-    #execute(){
-        if(this.instructions[1]==undefined)
+    #execute() {
+        if (this.instructions[1] == undefined)
             return true;
         //
-        this.pip_data[this.pip_data.length-1][this.instructions[1].pc]="EXE";
-        if(!this.fast)
-        ChangeColor(this.instructions[1].pc, this.id, 3);
+        this.pip_data[this.pip_data.length - 1][this.instructions[1].pc - this.pcs] = "EXE";
+        if (!this.fast)
+            ChangeColor(this.instructions[1].pc, this.id, 3);
         const instructionObj = this.instructions[1];
 
         // no latency
-        if(this.instructions[1].latency_var > 1){
+        if (this.instructions[1].latency_var > 1) {
             this.instructions[1].latency_var--;
             return false;
         }
@@ -339,125 +311,111 @@ class Core {
             default:
                 break;
         }
-        if(this.instructions.length>2)
-        {
-            this.instructions[2]=this.instructions[1];
+        if (this.instructions.length > 2) {
+            this.instructions[2] = this.instructions[1];
         }
-        else{
+        else {
             this.instructions.push(this.instructions[1]);
         }
         // this.numberofCycles++;
-        if(this.instructions[1]!=undefined && this.instructions[1].valueAfterExecution!=undefined && this.instructions[1].type != 'lw')
-        {
-            this.preforwarding[this.instructions[1].rd]=this.instructions[1].valueAfterExecution;
+        if (this.instructions[1] != undefined && this.instructions[1].valueAfterExecution != undefined && this.instructions[1].type != 'lw') {
+            this.preforwarding[this.instructions[1].rd] = this.instructions[1].valueAfterExecution;
         }
-        this.instructions[1]=undefined;
+        this.instructions[1] = undefined;
         return true;
     }
-    
-    #Memory(){
+
+    #Memory() {
         //lw sw only then its req..
-        if(this.instructions[2]==undefined)
-        {
+        if (this.instructions[2] == undefined) {
             return true;
         }
-        this.pip_data[this.pip_data.length-1][this.instructions[2].pc]="MEM";
+        this.pip_data[this.pip_data.length - 1][this.instructions[2].pc - this.pcs] = "MEM";
 
-        if(!this.fast)
-        ChangeColor(this.instructions[2].pc, this.id, 4);
+        if (!this.fast)
+            ChangeColor(this.instructions[2].pc, this.id, 4);
 
         // for cycles/stalls
-        if(this.instructions[2].type=="lw" ||this.instructions[2].type=="sw" )
-        {
-            
-            if(this.cacheStallCycles1>0)
-            {
+        if (this.instructions[2].type == "lw" || this.instructions[2].type == "sw") {
+
+            if (this.cacheStallCycles1 > 0) {
                 this.NumberofStalls++;
                 this.cacheStallCycles1--;
-                if(this.cacheStallCycles1>0)
-                {
+                if (this.cacheStallCycles1 > 0) {
                     return false;
                 }
             }
-            else
-            {
-                this.cacheStallCycles1 = this.cache.fetchVal(4*(this.instructions[2].locationOfPull+268435456) );//this handles storage of pc as well as returns stall cycles
-                if(this.cacheStallCycles1>0)// 4* because we send byte there not word index
+            else {
+                this.cacheStallCycles1 = this.cache.fetchVal(4 * (this.instructions[2].locationOfPull + 268435456));//this handles storage of pc as well as returns stall cycles
+                if (this.cacheStallCycles1 > 0)// 4* because we send byte there not word index
                 {
                     this.NumberofStalls++;
                     this.cacheStallCycles1--;
-                    if(this.cacheStallCycles1>0)
-                    {
+                    if (this.cacheStallCycles1 > 0) {
                         return false;
                     }
                 }
             }
-            this.cacheStallCycles1=0;
-            if(this.instructions[2].type=="lw" )//since we are reading only rs1 we need to check it if its in use or not
+            this.cacheStallCycles1 = 0;
+            if (this.instructions[2].type == "lw")//since we are reading only rs1 we need to check it if its in use or not
             {
                 this.instructions[2].valueAfterExecution = getBus(this.instructions[2].locationOfPull);
-                if(this.EnableForwarding)
-                {
-                    this.preforwarding[this.instructions[2].rd]=this.instructions[2].valueAfterExecution;
+                if (this.EnableForwarding) {
+                    this.preforwarding[this.instructions[2].rd] = this.instructions[2].valueAfterExecution;
                 }
             }
-            else if(this.instructions[2].type=="sw" )
-            {
+            else if (this.instructions[2].type == "sw") {
                 setBus(this.instructions[2].locationOfPush, this.instructions[2].rsval1);
                 // sw x1 0(x2) -> rs1 -> x1, rs2 ->x2, imd -> 0
                 //sw does nothing in wb... everything done here only
-            }    
+            }
         }
-        
-        if(this.instructions.length>2)
-        {
-            this.instructions[3]=this.instructions[2];
+
+        if (this.instructions.length > 2) {
+            this.instructions[3] = this.instructions[2];
         }
-        else{
+        else {
             this.instructions.push(this.instructions[2]);
         }
-        
 
-        if(this.cacheStallCycles1==0 && (this.instructions[2].type=="lw" ||this.instructions[2].type=="sw"))
-        {
-            this.cache.storeVal(4*(this.instructions[2].locationOfPull+268435456) );
-            this.cacheStallCycles1=-1;
-            this.instructions[2]=undefined;
+
+        if (this.cacheStallCycles1 == 0 && (this.instructions[2].type == "lw" || this.instructions[2].type == "sw")) {
+            this.cache.storeVal(4 * (this.instructions[2].locationOfPull + 268435456));
+            this.cacheStallCycles1 = -1;
+            this.instructions[2] = undefined;
             return false;
         }
-        this.instructions[2]=undefined;
+        this.instructions[2] = undefined;
         // return;
         return true;
     }
     #writeBack() {// writes to the front end ...
-        
-        if(this.instructions[3]==undefined)
-        {
+
+        if (this.instructions[3] == undefined) {
             return true;
         }
         this.NumberofInstructions++;
-        this.pip_data[this.pip_data.length-1][this.instructions[3].pc]="WB";
+        this.pip_data[this.pip_data.length - 1][this.instructions[3].pc - this.pcs] = "WB";
 
-        if(!this.fast)
-        ChangeColor(this.instructions[3].pc, this.id, 5);
+        if (!this.fast)
+            ChangeColor(this.instructions[3].pc, this.id, 5);
         const instructionObj = this.instructions[3];
         if (instructionObj.rd) {
             const regUpdate = this.regUpdateArr[instructionObj.rd];
             regUpdate.value = instructionObj.valueAfterExecution;
             this.register[instructionObj.rd] = instructionObj.valueAfterExecution;
-        }  
-        this.instructions[3]=undefined;
+        }
+        this.instructions[3] = undefined;
         // if(instructionObj.rd)
         this.Active_reg[instructionObj.rd]--;
         return true;
     }
-    and(instructionObj)
-    {
+
+    and(instructionObj) {
         instructionObj.valueAfterExecution = instructionObj.rsval1 & instructionObj.rsval2;
     }
-    srli(instructionObj)
-    {
-        instructionObj.valueAfterExecution = (instructionObj.rsval1)>>(instructionObj.imd);
+    srli(instructionObj) {
+        instructionObj.valueAfterExecution = (instructionObj.rsval1) >> (instructionObj.imd);
         // printing
     }
     sub(instructionObj) {
@@ -471,31 +429,30 @@ class Core {
     }
     lw(instructionObj) {
         // Assuming format is lw x1 0(x2) -> rd->x1, rs1 -> x2, imd -> 0
-        if(instructionObj.imd !=undefined){
+        if (instructionObj.imd != undefined) {
 
             // instructionObj.locationOfPull = instructionObj.rsval1/4 + instructionObj.imd/4; 
-            instructionObj.locationOfPull = instructionObj.rsval1/4 + instructionObj.imd/4; 
+            instructionObj.locationOfPull = instructionObj.rsval1 / 4 + instructionObj.imd / 4;
             // this.NumberofInstructions++;
         }
-        else{
+        else {
             //pseudo instruction
             // if(!this.EnableForwarding)
-            this.NumberofInstructions+=1;
-            this.numberofCycles+=1;
-            if(!this.EnableForwarding){
-                this.numberofCycles+=2;
+            this.NumberofInstructions += 1;
+            this.numberofCycles += 1;
+            if (!this.EnableForwarding) {
+                this.numberofCycles += 2;
             }
             instructionObj.locationOfPull = this.labels[instructionObj.label];
         }
     }
     sw(instructionObj) {
         // Assuming format is sw x1 0(x2) -> rs1->x1, rs2 -> x2, imd -> 0
-        if(instructionObj.imd !=undefined){
+        if (instructionObj.imd != undefined) {
             // this.NumberofInstructions++;
-            instructionObj.locationOfPush =instructionObj.rsval2/4 + instructionObj.imd/4;
+            instructionObj.locationOfPush = instructionObj.rsval2 / 4 + instructionObj.imd / 4;
         }
-        else
-        {
+        else {
             //give error here 
         }
     }
@@ -509,65 +466,71 @@ class Core {
     //branch instructions by default let you know their taken or not taken at time of execution
     beq(instructionObj) {
         if (instructionObj.rsval1 == instructionObj.rsval2) {
-            this.branchTaken=true;
-            this.pc = this.labels[instructionObj.label];
+            this.branchTaken = true;
+            this.pc = this.#pcfinder(this.labels[instructionObj.label]);
             // this.NumberofInstructions--;
             // this.numberofCycles-=2;
         }
     }
     bne(instructionObj) {
         if (instructionObj.rsval1 != instructionObj.rsval2) {
-            this.branchTaken=true;
-            this.pc = this.labels[instructionObj.label];
+            this.branchTaken = true;
+            this.pc = this.#pcfinder(this.labels[instructionObj.label]);
         }
     }
 
     // need to correct and add bge
     bgt(instructionObj) {
         if (instructionObj.rsval1 >= instructionObj.rsval2) {
-             this.branchTaken=true;
-            this.pc = this.labels[instructionObj.label];
+            this.branchTaken = true;
+            this.pc = this.#pcfinder(this.labels[instructionObj.label]);
         }
     }
     blt(instructionObj) {
         if (instructionObj.rsval1 < instructionObj.rsval2) {
-            this.branchTaken=true;
-            this.pc = this.labels[instructionObj.label];
+            this.branchTaken = true;
+            this.pc = this.#pcfinder(this.labels[instructionObj.label]);
         }
     }
     bgeu(instructionObj) {
         if (instructionObj.rsval1 >= instructionObj.rsval2) {
-             this.branchTaken=true;
-            this.pc = this.labels[instructionObj.label];
+            this.branchTaken = true;
+            this.pc = this.#pcfinder(this.labels[instructionObj.label]);
         }
     }
     bltu(instructionObj) {
         if (instructionObj.rsval1 < instructionObj.rsval2) {
-             this.branchTaken=true;
-            this.pc = this.labels[instructionObj.label];
+            this.branchTaken = true;
+            this.pc = this.#pcfinder(this.labels[instructionObj.label]);
         }
     }
-    
+
     // li(instructionObj) {
     //     // this.rd = this.#valueof(components[1]);
     //     // this.im d = parseInt(components[2]);
     //     instructionObj.valueAfterExecution = instructionObj.imd;
     // }
-    
+
     jal(instructionObj) {
-         this.branchTaken=true;
+        this.branchTaken = true;
         instructionObj.valueAfterExecution = this.pc + 1;//as insturctions are stored as arrays.... so pc + 1 is req
-        this.pc = this.labels[instructionObj.label];
+        this.pc = this.#pcfinder(this.labels[instructionObj.label]);
     }
     j(instructionObj) {
-         this.branchTaken=true;
-        this.pc = this.labels[instructionObj.label];
+        this.branchTaken = true;
+        this.pc = this.#pcfinder(this.labels[instructionObj.label]);
     }
     jr(instructionObj) {
-         this.branchTaken=true;
+        this.branchTaken = true;
         this.pc = this.register[instructionObj.rd];
     }
-    
+    #pcfinder(position) {
+        while (this.mappc[position] == undefined) {
+            position++;
+        }
+        return this.mappc[position];
+    }
+
 }
 
 export default Core;

@@ -3,7 +3,7 @@ import { getValue, EnableEdit, DisableEdit } from "./editor.js";
 import {cprint} from "./console_.js";
 import Cache from "./cache.js";
 import {update} from "./diagram.js";
-
+import { createTable } from "./CacheTable.js";
 class Processor {
     constructor() {
         this.memory = [];
@@ -37,6 +37,7 @@ class Processor {
             this.memory[i] = 0;
         }
         this.freeMemInitial = 0;
+        this.cache.init();
         this.CoreInstructions[0] = instructSet1;
         this.CoreInstructions[1] = instructSet2;
         this.set(0);
@@ -179,8 +180,24 @@ class Processor {
         
         cprint("the value of IPC is: "+this.cores[0].ipc+"\nThe value of CPI is: "+1/this.cores[0].ipc,0);
         cprint("the value of IPC is: "+this.cores[1].ipc+"\nThe value of CPI is: "+1/this.cores[1].ipc,1);
+        cprint("No. of misses : " + (this.cache.misses), 0);
+        cprint("No. of misses : " + (this.cache.misses), 1);
+        cprint("No. of access : " + (this.cache.acceses), 0);
+        cprint("No. of access : " + (this.cache.acceses), 1);
+        cprint("Missrate : " + (this.cache.misses/this.cache.acceses), 0);
+        cprint("Missrate : " + (this.cache.misses/this.cache.acceses), 1);
+
+        
+        
         update(this.cores[0].pip_data, this.cores[0].pcs);
-        console.log(this.cores[0].pip_data);
+        createTable(this.cache.storage);
+        if(this.cache.acceses != 0){
+            document.querySelector("#miss").value = "No. of misses : " + (this.cache.misses);
+            document.querySelector("#access").value = "No. of access : " + (this.cache.acceses);
+            document.querySelector("#missrate").value = "No. of misses : " + (this.cache.acceses/this.cache.misses);
+        }
+        // console.log(this.cores[0].pip_data);
+        console.log(this.cache.storage);
     }
     setmem(value, address) {
         this.memory[address] = value;
@@ -218,7 +235,44 @@ const run = document.querySelector(".Run");
 const step = document.querySelector(".Step_fd");
 const reset = document.querySelector(".reset");
 const edt = document.querySelector(".editBtn");
+const blk_size_input = document.getElementById("block_size_input");
+const cache_size_input = document.getElementById("cache_size_input");
+const mem_latency_input = document.getElementById("mem_latencyVal");
+const cache_latency_input = document.getElementById("cache_latencyVal");
+const associative_input = document.getElementById("associativity");
+const policy_input = document.getElementById("policy");
 
+blk_size_input.onchange = function(){
+    p.cache.blockSize = blk_size_input.value;
+    check(p.cache.size, p.cache.associativity, blk_size_input.value);
+};
+cache_size_input.onchange = function(){
+    p.cache.size = cache_size_input.value;
+    check(cache_size_input.value, p.cache.associativity, p.cache.blockSize);
+};
+associative_input.onchange = function(){
+    let temp = associative_input.value;
+    if(temp == 100){
+        temp = p.cache.size/p.cache.blockSize;
+    }
+    p.cache.associativity = temp;
+    check(p.cache.size, temp, p.cache.blockSize);
+};
+policy_input.onchange = function(){
+    p.cache.replacementPolicy=policy_input.value;
+};
+mem_latency_input.value = p.cache.memoryLatency;
+cache_latency_input.value = p.cache.cacheLatency;
+associative_input.value = p.cache.associativity;
+// console.log(p.cache.size/p.cache.blockSize);
+cache_size_input.value = p.cache.size;
+blk_size_input.value = p.cache.blockSize;
+mem_latency_input.onchange = function(){
+    p.cache.memoryLatency = mem_latency_input.value;
+};
+cache_latency_input.onchange = function(){
+    p.cache.cacheLatency = cache_latency_input.value;
+};
 function initialization() {
     const a1 = getValue(1);
     const a2 = getValue(2);
@@ -251,7 +305,13 @@ step.addEventListener('click', function Fun1() {
     DisableEdit();
     p.run();
 })
-
+function check(size, associativity, blocksize){
+    console.log(size, associativity, blocksize);
+    if(size/blocksize < associative_input.value && associative_input.value!=100){
+        p.cache.associativity = p.cache.blockSize;
+        associative_input.value = 1;
+    }
+}
 export function setBus(address, value) {
     p.setmem(value, address);
 }

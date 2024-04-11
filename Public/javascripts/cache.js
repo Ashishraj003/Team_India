@@ -10,23 +10,25 @@ class Cache{
         this.size = 2048;//2kb total cache size
         this.associativity = 32;// 4 blocks in 1 set
         this.blockSize = 8; // 8 bytes in 1 block (2 words)....
-        this.numberOfSets = this.size/(this.associativity*this.blockSize);// # of sets in cache
-        this.fetchMap = new Map();
-        this.memoryLatency = 10;
-        this.storage = new Array(this.numberOfSets*this.associativity);//to store blocks..(arr of blocks)
+        
+        this.memoryLatency = 4;
         // this.latency_arr = new Array(this.numberOfSets*this.associativity);
         // this.priority = new Array(this.numberOfSets*this.associativity);//to store priority of each block
-        this.cacheLatency = 1;
+        this.cacheLatency = 2;
         this.replacementPolicy=0;
+        
+    }
+    init(){
+        this.numberOfSets = this.size/(this.associativity*this.blockSize);// # of sets in cache
+        this.fetchMap = new Map();
+        this.storage = new Array(this.numberOfSets*this.associativity);//to store blocks..(arr of blocks)
         for(let i = 0; i < this.numberOfSets*this.associativity; i++)
         {
-            this.storage[i] = 0;
+            this.storage[i] = -1;
         }
         this.acceses=0;
         this.misses=0;
-    }
-    check(){
-        console.log(this.storage);
+
     }
     LRU_Policy(val)
     {
@@ -105,7 +107,7 @@ class Cache{
         
         // initially mai hi block size /4 karna hoga input le0ne ke samay.( because memory is in multiples of 4(addresses) same scheme followed for pc... 4 bytes in 1 word)
         // i can get a pc or a memory address  in val
-        this.acceses++;
+        // this.acceses++;
         let block_size = this.blockSize/4;
         let wordNumber = index/4;//just to show that it does'nt matter even if we do val/block_size
         let setNumber = this.#blockNum(index)%this.numberOfSets;
@@ -139,4 +141,5 @@ class Cache{
         return Math.floor(index/(this.blockSize));
     }
 }
+
 export default Cache;
