@@ -46,6 +46,7 @@ class Cache{
         //remember our cache has this design LRU ------ MRU ie LRU block is at left most and MRU rightMost in a set.
     }
     RR_Policy(val){//random replacement policy...
+        let setNumber = this.#blockNum(val)%this.numberOfSets; 
         let ran = Math.floor(Math.random() * (this.associativity));//gives an index between 0 to associativity -1...
         this.fetchMap[this.storage[ (setNumber)*this.associativity + ran]] = undefined;//randomly evicting the block
         this.storage[ (setNumber)*this.associativity + ran] = this.#blockNum(val);//assigning that specific random location to new incoming block
