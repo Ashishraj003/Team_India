@@ -97,7 +97,7 @@
     display: none;
     
   }
-  .Pipe-Table{
+  .Pipe-Table, .Help{
     position: absolute;
 
     background-color: rgba(50, 50, 50, 0.21);
@@ -125,7 +125,7 @@
     background-color: #7d1f1f;
     z-index: 20;
   }
-  .Pipe-table_holder{
+  .Pipe-table_holder, .help_holder{
     position: absolute;
     height: 77%;
     left: 14%;
@@ -135,7 +135,7 @@
     background-color: #7d1f1f;
     z-index: 20;
   }
-  .setting_holder, .table_holder{
+  .setting_holder, .table_holder, .Help_insider{
     display: flex;
     height: 90%;
     background-color: #212121;
@@ -198,7 +198,7 @@
     text-decoration: none;
     display: block;
   }
-  .setting_header, .table_header{
+  .setting_header, .table_header, .help_header{
     align-items: center;
     display: flex;
   }
@@ -406,6 +406,9 @@
   #pipeline_table{
     margin-top: 1%;
   }
+  #run_wait::after{
+    content: 'ms';
+  }
 
   /* CELEBRATION CODE */
   .confetti {
@@ -599,4 +602,28 @@
 #cache_table_root{
   gap: 4rem;
   display: flex;
+}
+
+
+.pushable {
+  background: hsl(340deg 100% 32%);
+  /* border-radius: 12px; */
+  margin-top: 4px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  /* outline-offset: 4px; */
+}
+.front {
+  display: block;
+  padding: 1.2px 4.2px;
+  border-radius: 1.2px;
+  /* font-size: 1.25rem; */
+  background: hsl(345deg 100% 47%);
+  color: white;
+  transform: translateY(-6px);
+}
+
+.pushable:active .front {
+  transform: translateY(-2px);
 }

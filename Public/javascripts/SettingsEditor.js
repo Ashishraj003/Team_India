@@ -7,6 +7,23 @@ const latency_select = document.getElementById("latency_input");
 const setdiv = document.querySelector(".settings");
 const celebration = document.querySelector(".confetti");
 const sim_btn = document.querySelector(".Simulatorbtn");
+
+const showhlp = document.querySelector(".show_hlp");
+const closehlp = document.querySelector(".close_hlp");
+const helpdiv = document.querySelector(".Help");
+
+
+
+closehlp.addEventListener("click", ()=>{
+    helpdiv.style.display = "none";
+});
+showhlp.addEventListener("click", ()=>{
+    helpdiv.style.display = "block";
+    
+});
+
+
+
 sim_btn.addEventListener("click", ()=>{
     if (celebration.style.display == "none") {
         celebration.style.display = "flex";

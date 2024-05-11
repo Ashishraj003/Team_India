@@ -4,9 +4,21 @@
   row-gap: 0.5rem;
   grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
 }
-body {
+/* body {
   overflow-y: hidden;
   overflow-x: hidden;
+} */
+html {
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
+
+body {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  width: 100%;
 }
 .pagination a {
   display: block;
@@ -72,12 +84,46 @@ button{
 }
 .Top_buttons>button:hover{
   background-color: rgba(221, 221, 221, 0.843);
-  border-style: inset;
+  /* border-style: inset; */
 }
 .Top_buttons:first-child {
   margin-left: 2rem;
 }
+.Top_buttons:last-child {
+  margin-right: 2rem;
+}
+.Top_buttons_holder{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* column-gap:; */
+}
+#run_wait {
+  display: inline-block;
+  position: relative;
+}
 
+/* position the unit to the right of the wrapper */
+#run_wait::after {
+  position: absolute;
+  top: 2px;
+  right: .5em;
+  transition: all .05s ease-in-out;
+}
+
+/* move unit more to the left on hover or focus within
+   for arrow buttons will appear to the right of number inputs */
+#run_wait:hover::after,
+#run_wait:focus-within::after {
+  right: 1.5em;
+}
+
+/* handle Firefox (arrows always shown) */
+@supports (-moz-appearance:none) {
+  #run_wait::after {
+    right: 1.5em;
+  }
+}
 .main_container {
   /* height: 85.5vh; */
   /* height: 5.34375rem; */
@@ -137,8 +183,10 @@ button{
 
 .text {
   background-color: rgb(0, 0, 0);
-  width: max-content;
+  /* width: max-content; */
   display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Style the tab */

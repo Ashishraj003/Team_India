@@ -1,16 +1,29 @@
 "use strict";
 export const latencyMap ={};
 function checkRegError(arr){
+  // return false;
   for(let i=0 ;i<arr.length;i++){
-    if(arr[i]==undefined || arr[i]<0||arr[i]>31){
+    if(!isFinite(arr[i]) || arr[i]<0 || arr[i]>31){
       return true;
     }
   }
+  return false;
 }
 function checkImdError(imd){
-    if(imd==undefined){
+    if(!isFinite(imd)){
       return true;
     }
+    return false;
+}
+function checkLabelError(label){
+  for (let i = 0;i<label.length;i++){
+    if(label.charAt(i)>'z' || label.charAt(i)<'A' || (label.charAt(i)<'a' && label.charAt(i)>'Z')){
+      if(label.charAt(i)>'9' || label.charAt(i)<'0'){
+        return true;
+      }
+    }
+  }
+  return false;
 }
 const alias = {
   'ra': '1',
@@ -78,37 +91,47 @@ class Instruction {
     }
     this.rsval1=0;
     this.rsval2=0;
-    this.error = false;
+    this.error = [false, false, false, false, false, false];
+    let len = 0;
     switch (this.type) {
       case "and":
       case "add":
       case "sub":
+      case "mul":
+      case "div":
+      case "or":
+      case "xor":
         this.rd = this.#valueof(components[1]);
         this.rs1 = this.#valueof(components[2]);
         this.rs2 = this.#valueof(components[3]);
-        this.error = checkRegError([this.rd, this.rs1, this.rs2]);
+        this.error[1] = checkRegError([this.rd, this.rs1, this.rs2]);
+        len = 3;
         break;
       case "srli":
       case "addi":
         this.rd = this.#valueof(components[1]);
         this.rs1 = this.#valueof(components[2]);
-        this.error = checkRegError([this.rs1, this.rs2]);
+        this.error[1] = checkRegError([this.rd, this.rs1]);
         this.imd = parseInt(components[3]);
-        this.error = this.error || checkImdError(this.imd);
+        this.error[2] = checkImdError(this.imd);
+        len = 3;
         break;
       case "lw":
         this.rd = this.#valueof(components[1]);
+        this.error[1] = checkRegError([this.rd]);
         // Assuming format is lw x1 0(x2) -> rd->x1, rs1 -> x2, imd -> 0
         if(components[2].includes("(")){
           let a1 = components[2].split("(");
           this.imd = parseInt(a1[0]);
           this.rs1 = this.#valueof(a1[1].replace(')', ''));
-          this.error = checkRegError([this.rs2]);
-          this.error = this.error || checkImdError(this.imd);
+          this.error[1] = this.error[1]||checkRegError([this.rs1]);
+          this.error[2] = checkImdError(this.imd);
 
         }else{
           this.label = components[2];
+          this.error[5] = checkLabelError(this.label);
         }
+        len = 2;
         break;
       case "sw":
         this.rs1 = this.#valueof(components[1]);
@@ -116,16 +139,34 @@ class Instruction {
         let a2 = components[2].split("(");
         this.imd = parseInt(a2[0]);
         this.rs2 = this.#valueof(a2[1].replace(')', ''));
-        this.error = checkRegError([this.rs1, this.rs2]);
-        this.error = this.error || checkImdError(this.imd);
+        this.error[1] = checkRegError([this.rs1, this.rs2]);
+        this.error[2] = checkImdError(this.imd);
+        len = 2;
         break;
       case "la":
-        this.str = components[1];
+        this.rd = parseInt(alias[components[1]]);
+        if(components[2].includes("("))
+        {
+          let a2 = components[2].split("(");
+          this.imd = parseInt(a2[0]);
+          this.rs1 = alias[(a2[1].replace(')', ''))];
+          this.error[1] = checkRegError([this.rs1, this.rd]);
+          this.error[2] = checkImdError(this.imd);
+          
+        }
+        else
+        {
+          this.label = components[2].replaceAll('\r','');
+          this.error[5] = checkLabelError(this.label);
+        }
+        len = 2;
+        break;
       case "li":
         this.rd = this.#valueof(components[1]);
-        this.error = checkRegError([this.rd]);
+        this.error[1] = checkRegError([this.rd]);
         this.imd = parseInt(components[2]);
-        this.error = this.error || checkImdError(this.imd);
+        this.error[2] = checkImdError(this.imd);
+        len = 2;
         break;
       case "beq":
       case "bne":
@@ -135,33 +176,54 @@ class Instruction {
       case "bltu":
         this.rs1 = this.#valueof(components[1]);
         this.rs2 = this.#valueof(components[2]);
-        this.error = checkRegError([this.rs1, this.rs2]);
+        this.error[1] = checkRegError([this.rs1, this.rs2]);
         this.label = components[3];
+        this.error[5] = checkLabelError(this.label);
+        len = 3;
         break;
       case "jalr":
         this.rd = this.#valueof(components[2]);
         this.rs1 = this.#valueof(components[1]);
-        this.error = checkRegError([this.rs1, this.rd]);
+        this.error[1] = checkRegError([this.rs1, this.rd]);
         this.offset = parseInt(components[3]);
+        len = 3;
         break;
       case "jal":
         this.rd = this.#valueof(components[1]);
-        this.error = checkRegError([this.rd]);
+        this.error[1] = checkRegError([this.rd]);
         this.label = components[2];
+        this.error[5] = checkLabelError(this.label);
+        len = 2;
         break;
 
       case "j":
         this.label = components[1];
+        this.error[5] = checkLabelError(this.label);
+        len = 1;
         break;
       case "jr":
         this.rd = this.#valueof(components[1]);
-        this.error = checkRegError([this.rd]);
+        this.error[1] = checkRegError([this.rd]);
+        len = 1;
+        break;
+      case "ecall":
+        len = 0;
         break;
       // Add more cases as needed for other instructions
       default:
       // Handle unsupported instruction type
-        this.error = true;
+        for(let i = 0;i<components.length;i++){
+          for(let j = 0;j<components[i].length;j++){
+            if(components[i].charAt(j)!=' '){
+              this.error[0] = true;
+              break;
+            }
+          }
+        }
 
+    }
+    if(components.length-1!=len){
+      this.error[4] = true;
     }
   }
   
@@ -185,6 +247,7 @@ class Instruction {
   }
 
   #valueof(s) {
+    if(!s) return undefined;
     if(s.includes('x'))
     {
       return parseInt(s.replace('x', ''));

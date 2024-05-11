@@ -1,7 +1,7 @@
 import Instruction from "./Instruction.js";
 import { getBus, setBus } from "./Processor.js";
 import { cprint } from "./console_.js";
-import { ChangeColor } from "./editor.js";
+import { ChangeColor , highlightError} from "./editor.js";
 import Predictor from "./Predictor.js";
 import Cache from "./cache.js";
 function IfBranch(type) {
@@ -10,6 +10,7 @@ function IfBranch(type) {
     }
     return false;
 }
+const Message = ["Type Undefined", "Incorrect Register", "Incorrect Imediate value", "Label not-defined", "Incorrect syntax", "Label not correct"]
 class Core {
     constructor(num) {
         this.id = num;
@@ -22,6 +23,7 @@ class Core {
         this.predictor = new Predictor();
     }
     Initialize(CoreInstructions, pcs, cache) {
+        
         this.ipc = 0;
         this.fast = false;
         this.register = new Array(32).fill(0);
@@ -29,37 +31,78 @@ class Core {
         this.line_no = {};
         this.InstructionMap = {};
         this.instructions = [];
+        this.instruction_pc = [0,0,0,0,0];
         this.preforwarding = {};
-        this.pc = 0;
+        this.pc = -1;
         this.pcs = pcs;
         this.cache = cache;
         this.pip_data = [];
         // console.log(pcs);
         this.End = false;
         this.NumberofInstructions = 0;
-        this.cacheStallCycles = 0;
         this.TotalInstuctionsLenght = CoreInstructions.length;
         this.numberofCycles = 0;
         this.cacheStallCycles1 = 0;
         this.cacheStallCycles = 0;
         this.mappc = {};
+        this.error = false;
         for (let z = 1; z < 6; z++)
             ChangeColor(-1, this.id, z);
         let j = 0;
-        for (let i = 0; i < CoreInstructions.length; i++) {
+        for (let i = pcs; i < CoreInstructions.length; i++) {
             let instruct = new Instruction(CoreInstructions[i]);
+            if(instruct.label && !this.labels[instruct.label]){
+                instruct.error[3] = true;// label does not exist
+            }
             instruct.pc = i;
             if (instruct.type == undefined) {
                 continue;
             }
+            if(this.pc === -1){
+                this.pc = j;
+            }
+            for(let er = 0; er < instruct.error.length ;er++){
+                if(instruct.error[er]){
+                    // console.log(instruct);
+                    this.#ShowError(i, er);
+                    this.error = true;
+                }
+            }
+            // if(this.error){
+            //     break;
+            // }
             this.mappc[i] = j;
             this.InstructionMap[j++] = instruct;
         }
     }
+    #ShowError(lineNo, Error){
+        highlightError(lineNo, Message[Error], this.id);
+    }
+    #ShowAlert(){
+        alert("There is an Error Run terminated");
+    }
+    update_textHiglight(){
+        if(this.instruction_pc[0])
+        ChangeColor(this.instruction_pc[0], this.id, 1);
+        if(this.instruction_pc[1])
+        ChangeColor(this.instruction_pc[1], this.id, 2);
+        if(this.instruction_pc[2])
+        ChangeColor(this.instruction_pc[2], this.id, 3);
+        if(this.instruction_pc[3])
+        ChangeColor(this.instruction_pc[3], this.id, 4);
+        if(this.instruction_pc[4])
+        ChangeColor(this.instruction_pc[4], this.id, 5);
+    }
     execute() {
+        if(this.error){
+            this.End = true;
+            this.#ShowAlert();
+            return;
+        }
         // cprint(this.instructions, this.id-1); //prints instructions on console 
         // this.cache.check();
         while (this.#CheckEmptyLine()) {
+            
             this.pc++;
         }
         this.End = this.#CheckEnd();
@@ -79,12 +122,13 @@ class Core {
         if (!this.#execute()) {
             return;
         }
-        if (this.branchTaken) {
-            this.branchTaken = false;
-            this.instructions[0] = undefined;
-            // this.NumberofInstructions++;
-            return;
-        }
+        if(this.branchTaken)
+            {
+                this.branchTaken=false;
+                this.instructions[0]=undefined;
+                // this.NumberofInstructions++;
+                return;
+            }
         if (!this.#DecodeRegisterFetch()) {
             return;
         }
@@ -115,7 +159,7 @@ class Core {
         while (this.#CheckEmptyLine()) {
             this.pc++;
         }
-
+        
 
         const object = this.InstructionMap[this.pc];
         if (object) {
@@ -125,10 +169,10 @@ class Core {
             // cprint(object.type, this.id-1);
             // cprint(this.pc, this.id-1);
             this.pip_data[this.pip_data.length - 1][object.pc - this.pcs] = "IF";
+            this.instruction_pc[0] = object.pc;
             if (!this.fast)
                 ChangeColor(object.pc, this.id, 1);
-        }
-
+       }
         if (this.cacheStallCycles != 0) {
             this.NumberofStalls++;
             this.cacheStallCycles--;
@@ -172,6 +216,7 @@ class Core {
             return true;
         //this else if is for pipeline forwardings....
         this.pip_data[this.pip_data.length - 1][this.instructions[0].pc - this.pcs] = "ID/Rf";
+        this.instruction_pc[1] = this.instructions[0].pc;
         if (!this.fast)
             ChangeColor(this.instructions[0].pc, this.id, 2);
         if (this.instructions[0].rs1 != undefined && this.Active_reg[this.instructions[0].rs1] != 0) {
@@ -240,10 +285,10 @@ class Core {
             return true;
         //
         this.pip_data[this.pip_data.length - 1][this.instructions[1].pc - this.pcs] = "EXE";
+        this.instruction_pc[2] = this.instructions[1].pc;
         if (!this.fast)
             ChangeColor(this.instructions[1].pc, this.id, 3);
         const instructionObj = this.instructions[1];
-
         // no latency
         if (this.instructions[1].latency_var > 1) {
             this.instructions[1].latency_var--;
@@ -308,6 +353,24 @@ class Core {
             case "jr":
                 this.jr(this.instructions[1]);
                 break;
+            case "ecall":
+                this.ecall();
+                break;
+            case "mul":
+                this.mul(this.instructions[1]);
+                break;
+            case "div":
+                this.div(this.instructions[1]);
+                break;
+            case "xor":
+                this.xor(this.instructions[1]);
+                break;
+            case "or":
+                this.or(this.instructions[1]);
+                break;
+            case "and":
+                this.and(this.instructions[1]);
+                break;
             default:
                 break;
         }
@@ -331,7 +394,7 @@ class Core {
             return true;
         }
         this.pip_data[this.pip_data.length - 1][this.instructions[2].pc - this.pcs] = "MEM";
-
+        this.instruction_pc[3] = this.instructions[2].pc;
         if (!this.fast)
             ChangeColor(this.instructions[2].pc, this.id, 4);
 
@@ -396,7 +459,7 @@ class Core {
         }
         this.NumberofInstructions++;
         this.pip_data[this.pip_data.length - 1][this.instructions[3].pc - this.pcs] = "WB";
-
+        this.instruction_pc[4] = this.instructions[3].pc;
         if (!this.fast)
             ChangeColor(this.instructions[3].pc, this.id, 5);
         const instructionObj = this.instructions[3];
@@ -456,11 +519,20 @@ class Core {
             //give error here 
         }
     }
-    li(instructionObj) {
-        // this.register[rd] = instructionObj.imd;
-    }
     la(instructionObj) {
-        // instructionObj.valueAfterExecution = this.labels[instructionObj.str];
+        // la a0 lable || la a0 0(x2)
+        
+        if((typeof this.labels[instructionObj.label]) !== 'string')
+            this.register[instructionObj.rd] = instructionObj.imd + this.register[instructionObj.rs1];
+        else
+        {
+            instructionObj.valueAfterExecution = 0;
+            this.stringBuffer = this.labels[instructionObj.label];
+        }
+    }
+    li(instructionObj) {
+        this.register[instructionObj.rd] = parseInt(instructionObj.imd);
+        instructionObj.valueAfterExecution = parseInt(instructionObj.imd);
     }
     //without predictor
     //branch instructions by default let you know their taken or not taken at time of execution
@@ -468,14 +540,20 @@ class Core {
         if (instructionObj.rsval1 == instructionObj.rsval2) {
             this.branchTaken = true;
             this.pc = this.#pcfinder(this.labels[instructionObj.label]);
-            // this.NumberofInstructions--;
-            // this.numberofCycles-=2;
+        }
+        else
+        {
+            this.branchTaken = false;
         }
     }
     bne(instructionObj) {
         if (instructionObj.rsval1 != instructionObj.rsval2) {
             this.branchTaken = true;
             this.pc = this.#pcfinder(this.labels[instructionObj.label]);
+        }
+        else
+        {
+            this.branchTaken = false;
         }
     }
 
@@ -485,11 +563,19 @@ class Core {
             this.branchTaken = true;
             this.pc = this.#pcfinder(this.labels[instructionObj.label]);
         }
+        else
+        {
+            this.branchTaken = false;
+        }
     }
     blt(instructionObj) {
         if (instructionObj.rsval1 < instructionObj.rsval2) {
             this.branchTaken = true;
             this.pc = this.#pcfinder(this.labels[instructionObj.label]);
+        }
+        else
+        {
+            this.branchTaken = false;
         }
     }
     bgeu(instructionObj) {
@@ -497,14 +583,21 @@ class Core {
             this.branchTaken = true;
             this.pc = this.#pcfinder(this.labels[instructionObj.label]);
         }
+        else
+        {
+            this.branchTaken = false;
+        }
     }
     bltu(instructionObj) {
         if (instructionObj.rsval1 < instructionObj.rsval2) {
             this.branchTaken = true;
             this.pc = this.#pcfinder(this.labels[instructionObj.label]);
         }
+        else
+        {
+            this.branchTaken = false;
+        }
     }
-
     // li(instructionObj) {
     //     // this.rd = this.#valueof(components[1]);
     //     // this.im d = parseInt(components[2]);
@@ -523,6 +616,30 @@ class Core {
     jr(instructionObj) {
         this.branchTaken = true;
         this.pc = this.register[instructionObj.rd];
+    }
+    ecall(){
+        if(this.register[17]== 4 && this.stringBuffer!=undefined)
+            {
+                cprint(this.stringBuffer, this.id-1);
+            }
+            else if(this.register[17]== 1)
+            {
+                cprint(this.register[10], this.id-1);
+            }else if(this.register[17]==10){
+                cprint("Program terminated\nExit code 0\n", this.id-1);
+            }
+    }
+    mul(instructionObj) {
+        instructionObj.valueAfterExecution = instructionObj.rsval1 * instructionObj.rsval2;
+    }
+    div(instructionObj) {
+        instructionObj.valueAfterExecution = instructionObj.rsval1 / instructionObj.rsval2;
+    }
+    xor(instructionObj) {
+        instructionObj.valueAfterExecution = instructionObj.rsval1 ^ instructionObj.rsval2;
+    }
+    or(instructionObj) {
+        instructionObj.valueAfterExecution = instructionObj.rsval1 | instructionObj.rsval2;
     }
     #pcfinder(position) {
         while (this.mappc[position] == undefined) {

@@ -21,9 +21,11 @@
     <div class = "settings">
       <div class = "setOut"></div>
       <div class = "set_align">
-      <div class = "setting_header">
+      <div class = "setting_header" style="display: flex;
+      justify-content: space-between;
+      align-items: center;">
         <a href="javascript:" class="Settings_btn btn_type2">SETTINGS</a>
-        <a href="javascript:" class = "close_set btn_type1">CLOSE</a>
+        <a href="javascript:" class = "close_set btn_type1" style="margin-right: 15px;">CLOSE</a>
       </div>
       <div class = "setting_holder">
        
@@ -118,11 +120,43 @@
     </div>
       </div>
     </div>
+    <div class = "Help">
+      
+      <div class = "help_holder" style="margin-top: 1rem;">
+        <div class = "help_header" style="height: 10%;display: flex;
+        justify-content: space-between;
+        align-items: center;">
+          <a href="javascript:" class="btn_type2">HELP</a>
+          <a href="javascript:" class = "close_hlp btn_type1" style="margin-right: 15px;">CLOSE</a>
+        </div>
+      <div class = "Help_insider">
+        <div class = "t_marker" style="width: 10%;">
+  
+        </div>
+        <div id = "help_img_holder" style="overflow-y: scroll; margin-left: 10px;">
+        <p>If anything undesirable, click on REFRESH on top right</p>
+          <img src="./Help_PNG/1.png" alt="1" style="width:90%;height:90%; margin-top: 10px;">
+          <img src="./Help_PNG/2.png" alt="1" style="width:90%;height:90%; margin-top: 10px;">
+          <img src="./Help_PNG/3.png" alt="1" style="width:90%;height:90%; margin-top: 10px;">
+          <img src="./Help_PNG/4.png" alt="1" style="width:90%;height:90%; margin-top: 10px;">
+          <img src="./Help_PNG/5.png" alt="1" style="width:90%;height:90%; margin-top: 10px;">
+          <img src="./Help_PNG/6.png" alt="1" style="width:90%;height:90%; margin-top: 10px;">
+          <img src="./Help_PNG/7.png" alt="1" style="width:90%;height:90%; margin-top: 10px;">
+          <img src="./Help_PNG/8.png" alt="1" style="width:90%;height:90%; margin-top: 10px;">
+          <img src="./Help_PNG/9.png" alt="1" style="width:90%;height:90%; margin-top: 10px;">
+
+        </div>
+  
+      </div>
+    </div>
+    </div>
     <div class = "Pipe-Table">
       <div class = "Pipe-table_holder">
-      <div class = "table_header">
+      <div class = "table_header" style="display: flex;
+      justify-content: space-between;
+      align-items: center;">
         <a href="javascript:" class="Tables_btn btn_type2">TABLE</a>
-        <a href="javascript:" class = "close_tab btn_type1">CLOSE</a>
+        <a href="javascript:" class = "close_tab btn_type1" style="margin-right: 15px;">CLOSE</a>
       </div>
       
       
@@ -151,7 +185,7 @@
       </div>
     </div>
     </div>
-    </div>
+    <!-- </div> -->
     <!-- first header for file edit buttons -->
     <nav id="mainNavbar" class="navbar navbar-dark  navbar-expand-md py-0 fixed-top">
       <a href="#" class="navbar-brand Simulatorbtn">SIMULATOR</a>
@@ -169,10 +203,7 @@
             </div>
           </li>
           <li class="nav-item">
-            <a href="" class="nav-link" id="enjoy"> EDIT</a>
-          </li>
-          <li class="nav-item">
-            <a href="" class="nav-link" id="enjoy">HELP</a>
+            <a href="javascript:" class="nav-link show_hlp">HELP</a>
           </li>
           <li class="nav-item">
             <a href="javascript:" class="nav-link show_set">SETTINGS</a>
@@ -180,25 +211,39 @@
           <li class="nav-item">
             <a href="javascript:" class="nav-link show_tab">TABLE</a>
           </li>
+          <li class="nav-item">
+            <a href="" class="nav-link" id="enjoy">REFRESH</a>
+          </li>
         </ul>
       </div>
     </nav>
 
     <!-- for run buttons and commands -->
     <section class="Top">
-      <div class="Top_buttons">
-        <!-- Step forward -->
-        <button class="reset" id="restart">&#8635</button>
-        <button class="Step_fd">&#128898;</button>
-        <!-- Step backward -->
-        <button class="Step_bk">&#128896;</button>
-        <button class="Run">Run</button>
-          <label for="" id="forwarding">Forwarding:</label>
-          <label class="forwarding_toggle">
+      <div class="Top_buttons_holder">
+        <div class="Top_buttons">
+          <!-- Step forward -->
+          <button class="reset pushable" id="restart"><span class = "front">-&#8635-</span></button>
           
-          <input type="checkbox" class = "forward_input">
-          <span class="slider round"></span>
-        </label>
+          <!-- Step backward -->
+          <button class="Step_bk pushable"> <span class = "front">Step-Back </span></button>
+          <button class="Step_fd pushable"><span class = "front">Step-Front</span></button>
+          <button class="Run pushable" style = "margin-left: 20px;"><span class = "front" >Fast-Run</span></button>
+          <div id="run_wait">
+          <input type="number" id="run_wait_ms" name="quantity" min="10" max="1000" step="10" value = "100" style = "margin-left: 30px;">
+          </div>
+          <button class="Run_step pushable"><span class = "front">Run-Steps</span></button>
+
+            
+        </div>
+        <div class="Top_buttons">
+          <label for="" id="forwarding">Forwarding:</label>
+            <label class="forwarding_toggle">
+            
+            <input type="checkbox" class = "forward_input">
+            <span class="slider round"></span>
+          </label>
+        </div>
     </div>
     </section>
 
@@ -331,7 +376,35 @@
         <!-- memory -->
 
         <div class="memory_holder" id="memory_id" style="display: none">
-
+          <div style="display: flex;">
+          <table>
+            <tr>
+              <td><input class="mem_element_head t2" id="mem-0_0" type = "text" readonly = true></input></td>
+              <td><input class="mem_element_head" id="mem-0_1" type = "text" readonly = true></input></td>
+              <td><input class="mem_element_head" id="mem-0_2" type = "text" readonly = true></input></td>
+              <td><input class="mem_element_head" id="mem-0_3" type = "text" readonly = true></input></td>
+              <td><input class="mem_element_head" id="mem-0_4" type = "text" readonly = true></input></td>
+              <td><input class="mem_element_head" id="mem-0_5" type = "text" readonly = true></input></td>
+            </tr>
+            <% for(let i=1;i<=11;i++) { %>
+              <tr>
+                <% for(let j=0;j<=5;j++) { %>
+                    <td><input class="mem_element col_name" id="mem-<%=i%>_<%=j%>" type = "text" readonly = true></input></td>
+                  <% } %>
+              </tr>
+              <% } %>
+            </table>
+            <div style="display: flex;
+                        flex-direction: column;">
+                <button class = "b2" id = "mem_top" style="flex: 1;"><<</button>
+                <!-- <div style="flex: 1;"></div> -->
+                <button class = "b2" id = "mem_up" style="flex: 1;"><</button>
+                <div style="flex: 5;"></div>
+                <button class = "b2" id = "mem_down" style="flex: 1;">></button>
+                <!-- <div style="flex: 1;"></div> -->
+                <button class = "b2" id = "mem_bottom" style="flex: 1;">>></button>
+            </div>
+          </div>
           <!-- <div> -->
           <!-- <ul> -->
           <!-- <li id="decimal" style="display: block"> -->
@@ -345,15 +418,11 @@
 
           <!-- </ul> -->
           <!-- </div> -->
-          <div class="pagination" id="pagination-container"></div>
+          <!-- <div class="pagination" id="pagination-container"></div> -->
 
           <!-- </div> -->
 
-          <div class="reg_header" id="okok">
-            <div>
-            </div>
-          </div>
-
+          
         </div>
         <div id = "console_id" style="display: none;">
         <div class = "console_holder">
@@ -375,7 +444,7 @@
     <script type="module" src="/javascripts/diagram.js"></script>
     <script type="module" src="/javascripts/editor.js"></script>
     <script type="module" src="/javascripts/Processor.js"></script>
-    <script type="module" src="/javascripts/table.js"></script>
+    <script type="module" src="/javascripts/Memory_table.js"></script>
     <script type="module" src="/javascripts/SettingsEditor.js"></script>
 
   </body>

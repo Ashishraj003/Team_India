@@ -6,9 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const itemsPerPage = 32;
     const totalItems = 1024;
     let currentPage = 1;
-
-//
-
     function decimalToHex32Bit(decimalNumber) {
         // Convert the decimal number to hexadecimal
         var hexString = decimalNumber.toString(16);

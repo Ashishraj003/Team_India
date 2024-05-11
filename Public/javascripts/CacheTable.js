@@ -3,7 +3,9 @@ let top = 0;
 const height = 10;
 const width = 1;
 let data = [];
-export function createTable(arr){
+let bolckSize = 1;
+export function createTable(arr, size){
+    bolckSize = size;
     data = [];
     // top = 0;
     for(let i = 0;i<arr.length;i++){
@@ -20,7 +22,7 @@ export function createTable(arr){
             
             if(val!=undefined){
                 document.getElementById('cache-' + i + ',' + 0).innerText = i+tp;
-                document.getElementById('cache-' + i + ',' + 1).innerText = val;
+                document.getElementById('cache-' + i + ',' + 1).innerText = convert(val);
             }
             else{
                 document.getElementById('cache-' + i + ',' + 0).innerText = "-";
@@ -60,11 +62,13 @@ function updateTable(event) {
     return false;
   }
   function convert(val){
+    // return val;
     if(val=='-'){
         return "-";
     }
     val = parseInt(val);
-    if(val>=3097150){
+    if(val>=268435456/bolckSize){
+        // val *= 4;
         var hexString = val.toString(16);
         while (hexString.length < 8) {
             hexString = '0' + hexString;
@@ -72,16 +76,11 @@ function updateTable(event) {
         hexString = '0' + 'x' + hexString;
         return hexString;
     }
-    else if(val>=2097150){
-        return "CORE 2: " + (val-2097152);
+    else if(val>=16777216/bolckSize){
+        return "CORE 2: " + (val-16777216/bolckSize);
     }else{
         return "CORE 1: " + val;
     }
-}
-
-  function decimalToHex32Bit(decimalNumber) {
-    // Convert the decimal number to hexadecimal
-    
 }
   var tbody = document.getElementById('cache_table_root');
   tbody.onwheel = updateTable;

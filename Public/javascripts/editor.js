@@ -1,3 +1,5 @@
+import { text_update } from "./Processor.js";
+
 const edt1 = document.querySelector("#mytextarea");
 
 ace.define("ace/mode/risc", function (require, exports, module) {
@@ -27,6 +29,10 @@ ace.define("ace/mode/risc", function (require, exports, module) {
                     regex: "\\b(?:0x[0-9A-Fa-f]+|0b[01]+|\\d+)\\b"
                 },
                 {
+                    token: "string",
+                    regex: "\".*\""
+                },
+                {
                     token: "comment",
                     regex: "#.*$"
                 },
@@ -36,7 +42,7 @@ ace.define("ace/mode/risc", function (require, exports, module) {
                 },
                 {
                     token: "function",
-                    regex: "\\b(?:add|sub|srli|and|addi|lw|sw|la|li|beq|bne|bgt|blt|bgeu|bltu|jalr|jal|j|jr)\\b",
+                    regex: "\\b(?:add|sub|srli|and|addi|lw|sw|la|li|beq|bne|bgt|blt|bgeu|bltu|jalr|jal|j|jr|and|or|xor|not|div|mul)\\b",
                     // onMatch: function(value, state, stack, line) {
                     //     // Suggestions for functions
                     //     var functionSuggestions = ['ad', 'su', 'sr', 'a', 'ad', 'l', 's', 'l', 'l', 'be', 'bn', 'bg', 'bl', 'bg', 'bl', 'ja', 'ja', 'j', 'jr'];
@@ -208,18 +214,18 @@ topBut.appendChild(li);
 
 li.style.display = "none";
 export function EnableEdit() {
-    let edit1 = ace.edit(edt1);
-    let edit2 = ace.edit(edt2);
-    edit1.setReadOnly(false);
-    edit2.setReadOnly(false);
-    li.style.display = "none";
+    // let edit1 = ace.edit(edt1);
+    // let edit2 = ace.edit(edt2);
+    // edit1.setReadOnly(false);
+    // edit2.setReadOnly(false);
+    // li.style.display = "none";
 }
 export function DisableEdit() {
-    let edit1 = ace.edit(edt1);
-    let edit2 = ace.edit(edt2);
-    edit1.setReadOnly(true);
-    edit2.setReadOnly(true);
-    li.style.display = "Block";
+    // let edit1 = ace.edit(edt1);
+    // let edit2 = ace.edit(edt2);
+    // edit1.setReadOnly(true);
+    // edit2.setReadOnly(true);
+    // li.style.display = "Block";
 }
 
 export function getValue(i){
@@ -233,10 +239,40 @@ export function getValue(i){
 export function setValue1(code1) {
     // let edit1 = ace.edit(edt1);
     edit1.setValue(code1);
+    edit1.focus();
 }
 
 export function setValue2(code1) {
     // let edit2 = ace.edit(edt2);
     edit2.setValue(code1);
+    edit2.focus();
+}
+edit1.getSession().on('change', function(e) {
+    text_update();
+});
+edit2.getSession().on('change', function(e) {
+    text_update();
+});
+let ErrorArray = [[], []];
+export function clearAnotation(){
+    ErrorArray = [[], []];
+    edit1.getSession().clearAnnotations();
+    edit2.getSession().clearAnnotations();
+}
+export function highlightError(lineNumber, errorMessage, index) {
+    console.log(lineNumber, errorMessage);
+    var session = edit1.getSession();
+    if(index == 2){
+        session = edit2.getSession();
+    }
+    var errorAnnotation = {
+        row: lineNumber, // Ace Editor lines are zero-indexed
+        column: 0,
+        text: errorMessage,
+        type: "error"
+    };
+    // session.
+    ErrorArray[index-1].push(errorAnnotation);
+    session.setAnnotations(ErrorArray[index-1]);
 }
 

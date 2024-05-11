@@ -11,10 +11,10 @@ class Cache{
         this.associativity = 32;// 4 blocks in 1 set
         this.blockSize = 8; // 8 bytes in 1 block (2 words)....
         
-        this.memoryLatency = 4;
+        this.memoryLatency = 1;
         // this.latency_arr = new Array(this.numberOfSets*this.associativity);
         // this.priority = new Array(this.numberOfSets*this.associativity);//to store priority of each block
-        this.cacheLatency = 2;
+        this.cacheLatency = 1;
         this.replacementPolicy=0;
         
     }
@@ -34,7 +34,7 @@ class Cache{
     {
         
         val=this.#blockNum(val);//assigning it its block number
-        let setNumber = this.#blockNum(val)%this.numberOfSets; 
+        let setNumber = val%this.numberOfSets; 
         this.fetchMap[this.storage[setNumber*this.associativity]] = undefined;//putting the LRU block to undefined
         //since it is evicted so next time the cpu requests this block(the lru block) the fetchmap should say its not there
         for(let i = 1; i < this.associativity; i++)//iterating over the set and creating space for MRU by shifting each block left
@@ -55,7 +55,6 @@ class Cache{
     
     UpdateLRU(index)
     {
-        debugger;
         let old=this.#blockNum(index);
         let setNumber = this.#blockNum(index)%this.numberOfSets;
         let flag = 0;
@@ -63,7 +62,7 @@ class Cache{
         // (LeftMost)LRU......MRU(rightMost)
         for(let i = 0; i < this.associativity; i++)
         {
-            if(this.storage[firstBlockIndex + i]==0)//means the block was already MRU
+            if(this.storage[firstBlockIndex + i]==-1)//means the block was already MRU
             {
                 this.storage[ firstBlockIndex+i-1]=old+1; //so nothing to do....
                 return ;
@@ -73,6 +72,10 @@ class Cache{
             }
             else if(this.storage[ firstBlockIndex + i ]== old+1){
                 flag = 1;
+                if(this.storage[firstBlockIndex + i+1]==-1)
+                {
+                    return;//already mru so nothing to do
+                }
             }
         }
         this.storage[ (setNumber+1)*this.associativity-1]=old+1;
@@ -119,7 +122,7 @@ class Cache{
         this.misses++;
         for(let i = 0; i < this.associativity; i++)//7p
         {
-            if(this.storage[ firstBlockIndex + i ]==0)//under Review...
+            if(this.storage[ firstBlockIndex + i ]==-1)//under Review...
             {
                 this.fetchMap[this.#blockNum(index)]=1;
                 this.storage[ firstBlockIndex + i ] = this.#blockNum(index)+1;

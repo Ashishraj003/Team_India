@@ -134,7 +134,7 @@ export function update(new_data, pc){
     }
   }
   
-  console.log(data);
+  // console.log(data);
 }
 
 corebtn1.addEventListener("click", ()=>{
@@ -161,13 +161,13 @@ table.addEventListener("click", ()=>{
   //   id_ = setInterval(()=>{
   //     write(++xcor);
   //   }, 100);
-  //   console.log("start");
+  //   // console.log("start");
   // }else{
   //   clearInterval(id_);
   //   xcor = -1;
-  //   console.log("Clear");
+  //   // console.log("Clear");
   // }
-  change((++button_class_no)%3);
+  change((++button_class_no)%2);
 });
 function updateTable(event) {
   top += (event.deltaY>0?1:-1) * Math.log(Math.abs(event.deltaY)+1) / Math.LN10;
@@ -188,7 +188,7 @@ function updateTable(event) {
   }
   let tp = parseInt(top);
   let lf = parseInt(left);
-  console.log(top, left, event.deltaX);
+  // console.log(top, left, event.deltaX);
   for(let j = 1;j <= width;j++){
     document.getElementById('pipe-' + 0 + ',' + j).innerText = lf+j;
   }

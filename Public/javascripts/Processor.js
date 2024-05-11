@@ -1,9 +1,10 @@
 import Core from "./Core.js"
-import { getValue, EnableEdit, DisableEdit } from "./editor.js";
+import { getValue ,  clearAnotation} from "./editor.js";
 import {cprint} from "./console_.js";
 import Cache from "./cache.js";
 import {update} from "./diagram.js";
 import { createTable } from "./CacheTable.js";
+// document.documentElement.scrollTop = 0;
 class Processor {
     constructor() {
         this.memory = [];
@@ -17,6 +18,7 @@ class Processor {
         this.freeMemfinal = 2 ** 12 - 1;
         this.pcs = [-1, -1]; //pc start
         this.strings = {};
+        this.updated = false;
         document.querySelector(".forward_input").addEventListener("click", ()=>{
             if(this.cores[0].EnableForwarding){ 
                 this.cores[0].EnableForwarding=false;
@@ -38,12 +40,19 @@ class Processor {
         }
         this.freeMemInitial = 0;
         this.cache.init();
+        this.time = 0;
         this.CoreInstructions[0] = instructSet1;
         this.CoreInstructions[1] = instructSet2;
+        this.cores[0].labels = {};
+        this.cores[1].labels = {};
+        clearInterval(this.inter);
+        clearAnotation();
         this.set(0);
         this.set(1);
         this.cores[0].Initialize(this.CoreInstructions[0], this.pcs[0],this.cache);
         this.cores[1].Initialize(this.CoreInstructions[1], this.pcs[1],this.cache);
+        this.updated = true;
+        
     }
 
 
@@ -57,20 +66,34 @@ class Processor {
             str3:  .string "After sorting : \n"
             str1: .string "\n"
         */
-        
-        console.log(this.cores[x].EnableForwarding);
+            for (let i = 0; i < this.CoreInstructions[x].length; i++) {
+            
+                if (this.CoreInstructions[x][i].includes('#')) {
+                    this.CoreInstructions[x][i] = this.CoreInstructions[x][i].split('#')[0];
+                }
+            }
+        let dataExist = false;
         for (let i = 0; i < this.CoreInstructions[x].length; i++) {
             
-            if (this.CoreInstructions[x][i].includes('#')) {
-                this.CoreInstructions[x][i] = this.CoreInstructions[x][i].split('#')[0];
+            if(this.CoreInstructions[x][i].includes('.data')){
+                if(this.pcs[x] != -1){
+                    //error
+                }
+                dataExist = true;
             }
-
-            if (this.CoreInstructions[x][i].includes('.text') && this.pcs[x] == -1) {
+            if (this.CoreInstructions[x][i].includes('.text')) {
                 this.pcs[x] = i + 1;
+                break;
+            }
+            if(this.CoreInstructions[x][i].replaceAll(" ", "").length>0 && this.pcs[x]==-1){
+                if(!dataExist){
+                    this.pcs[x] = i;
+                }
             }
         }
+        console.log(this.pcs);
         if (this.pcs[x] == -1) {
-            this.pcs[x] = 0;
+            this.pcs[x] = 1;
         }
 
         for (let i = this.pcs[x]; i < this.CoreInstructions[x].length; i++) {
@@ -92,35 +115,26 @@ class Processor {
 
             if (instruct.includes(':')) {//check if its a base instruction....
                 label = instruct.split(':')[0].replaceAll(" ", '');
-
                 instruct = instruct.split(':')[1];
+                this.CoreInstructions[x][i] = instruct;
             }
 
             instruct = this.#split(instruct.replaceAll('\r', ''));
             //check if later half exists...
 
-            if (instruct[0] && instruct[0].replaceAll(".", "") === "string") {
-                string = instruct[1].replaceAll('\"', "");
-                this.strings[label] = string;
+            if (instruct.length>0 && instruct[0].includes('.string')) {
+                let string = instruct[1];
+                string = string.replaceAll('"',"");
+                string = string.replaceAll('\\n',"\n");
+                string = string.replaceAll('\r',"");
+                string = string.replaceAll('\\t',"\n");
+                this.cores[x].labels[label] = string;//
+                if(instruct.length>2){
+                    //error
+                }
             }
             else if (instruct[0] && instruct[0].includes('.')) {
                 switch (instruct[0].split('.')[1]) {
-
-                    case "zero":
-                        if (label != "+") {
-                            this.cores[x].labels[label] = parseInt(this.freeMemInitial);
-                        }
-                        let size = parseInt(instruct[1]);
-                        if (this.freeMemInitial + size < this.freeMemfinal) {
-                            let array = [];
-                            for (let i = 0; i < size; i++) {
-                                array.push(0);
-                            }
-                            this.memory.splice(this.freeMemInitial, array.length, ...array);
-                            this.freeMemInitial += size;
-                        }
-                        break;
-
                     case "word":
                         let i = 1;
                         // 003 kept label inside if
@@ -150,8 +164,10 @@ class Processor {
 
         }
     }
-    run() {
-        if (!this.CoreInstructions){
+    step() {
+        
+        this.time++;
+        if (!this.updated){
             initialization();
         }
         if(!this.cores[0].End){
@@ -161,22 +177,72 @@ class Processor {
             this.cores[1].execute();
         }
     }
-    play() {
+    back_step(){
+        if(this.time <= 0 || this.time>5000) return;
+        let time = this.time;
+        initialization();
         this.cores[0].fast = true;
         this.cores[1].fast = true;
+        let current_time = 0;
+        
+        while (!this.cores[0].End || !this.cores[1].End) {
+            
+            if(current_time>=time-1) break;
+            if(!this.cores[0].End){
+                this.cores[0].execute();
+            }
+            if (!this.cores[1].End){
+                this.cores[1].execute();
+            }
+            current_time++;
+            
+        }
+        this.cores[0].fast = false;
+        this.cores[1].fast = false;
+        if(!this.cores[0].End){
+            this.cores[0].execute();
+        }
+        if (!this.cores[1].End){
+            this.cores[1].execute();
+        }
+        this.cores[0].update_textHiglight();
+        this.cores[1].update_textHiglight();
+        this.time = current_time;
+        
+    }
+    run_step(time){
+        this.inter = setInterval(()=>{
+            step.click();
+            if(this.cores[0].End && this.cores[1].End){
+                clearInterval(this.inter);
+            }
+        }, time);
+    }
+    run() {
+        
 
         // debugger;
+        // this.inter = setInterval(()=>{
+        //     this.step();
+        //     if(this.cores[0].End && this.cores[1].End){
+        //         clearInterval(this.inter);
+        //     }
+        // }, 100);
+        
+        this.cores[0].fast = true;
+        this.cores[1].fast = true;
         while (!this.cores[0].End || !this.cores[1].End) {
-            this.run();
+            
+            this.step();
         }
         this.cores[0].ipc = this.cores[0].NumberofInstructions/(this.cores[0].numberofCycles);
         this.cores[1].ipc = this.cores[1].NumberofInstructions/(this.cores[1].numberofCycles);
-        cprint("Number of instruction are: "+this.cores[0].NumberofInstructions,0);
+        cprint("\n\n\nNumber of instruction are: "+this.cores[0].NumberofInstructions,0);
         cprint("the number of cycle are: "+this.cores[0].numberofCycles,0);
-        cprint("the number of stalls are: "+(this.cores[0].numberofCycles-this.cores[0].NumberofInstructions-4),0);
-        cprint("Number of instruction are: "+this.cores[1].NumberofInstructions,1);
+        cprint("the number of stalls are: "+(this.cores[0].numberofCycles-this.cores[0].NumberofInstructions),0);
+        cprint("\n\n\nNumber of instruction are: "+this.cores[1].NumberofInstructions,1);
         cprint("the number of cycle are: "+this.cores[1].numberofCycles, 1);
-        cprint("the number of stalls are: "+(this.cores[1].numberofCycles-this.cores[1].NumberofInstructions-4),1);
+        cprint("the number of stalls are: "+(this.cores[1].numberofCycles-this.cores[1].NumberofInstructions),1);
         
         cprint("the value of IPC is: "+this.cores[0].ipc+"\nThe value of CPI is: "+1/this.cores[0].ipc,0);
         cprint("the value of IPC is: "+this.cores[1].ipc+"\nThe value of CPI is: "+1/this.cores[1].ipc,1);
@@ -190,11 +256,11 @@ class Processor {
         
         
         update(this.cores[0].pip_data, this.cores[0].pcs);
-        createTable(this.cache.storage);
+        createTable(this.cache.storage, this.cache.blockSize);
         if(this.cache.acceses != 0){
             document.querySelector("#miss").innerText = "No. of misses : " + (this.cache.misses);
             document.querySelector("#access").innerText = "No. of access : " + (this.cache.acceses);
-            document.querySelector("#missrate").innerText = "No. of misses : " + (this.cache.acceses/this.cache.misses);
+            document.querySelector("#missrate").innerText = "Miss rate : " + (this.cache.misses/this.cache.acceses);
         }
         // console.log(this.cores[0].pip_data);
         console.log(this.cache.storage);
@@ -214,6 +280,30 @@ class Processor {
         while (i < s.length) {
             let s1 = "";
             while (s.charAt(i) !== " " && s.charAt(i) !== "," && i < s.length) {
+                if(s.charAt(i)=='\"'){
+                    i++;
+                    while(s.charAt(i) !== "\""){
+                        s1 += s[i++];
+                        if(i>s.length){
+                            //error
+                            break;
+                        }
+                    }
+                    i++;
+                    continue;
+                }
+                if(s.charAt(i)=='\''){
+                    i++;
+                    while(s.charAt(i) !== "\'"){
+                        s1 += s[i++];
+                        if(i>s.length){
+                            //error
+                            break;
+                        }
+                    }
+                    i++;
+                    continue;
+                }
                 s1 += s[i++];
             }
             // extra " " and ","
@@ -226,13 +316,17 @@ class Processor {
         }
         return a;
     }
+    
 }
 
 // export default Processor;
 const s = document.querySelector('#mytextarea');
 const p = new Processor();
 const run = document.querySelector(".Run");
+const run_step = document.querySelector(".Run_step");
+const wait = document.querySelector("#run_wait_ms");
 const step = document.querySelector(".Step_fd");
+const step_bk = document.querySelector(".Step_bk");
 const reset = document.querySelector(".reset");
 const edt = document.querySelector(".editBtn");
 const blk_size_input = document.getElementById("block_size_input");
@@ -274,6 +368,12 @@ cache_latency_input.onchange = function(){
     p.cache.cacheLatency = cache_latency_input.value;
 };
 function initialization() {
+    for (let i = 0; i < 31; i++) {
+        const reg1Update = document.getElementById(`reg1Text${i}`);
+        const reg2Update = document.getElementById(`reg2Text${i}`);
+        reg1Update.value = "0";
+        reg2Update.value = "0";
+    }
     const a1 = getValue(1);
     const a2 = getValue(2);
     const alist1 = a1.split('\n');
@@ -281,32 +381,31 @@ function initialization() {
     p.init(alist1, alist2);
 }
 
-edt.addEventListener("click", () => {
-    initialization();
-    EnableEdit();
-});
+// edt.addEventListener("click", () => {
+//     initialization();
+//     EnableEdit();
+// });
 reset.addEventListener('click', () => {
-    for (let i = 0; i < 31; i++) {
-        const reg1Update = document.getElementById(`reg1Text${i}`);
-        const reg2Update = document.getElementById(`reg2Text${i}`);
-        reg1Update.value = "0";
-        reg2Update.value = "0";
-    }
     initialization();
-    EnableEdit();
 })
 
 run.addEventListener('click', function Fun1() {
     initialization();
-    p.play();
-})
-
-step.addEventListener('click', function Fun1() {
-    DisableEdit();
     p.run();
+    p.updated = false;
+})
+run_step.addEventListener('click', function Fun1() {
+    initialization();
+    p.run_step(wait.value);
+})
+step.addEventListener('click', function Fun1() {
+    // highlightError(1,"error");
+    p.step();
+})
+step_bk.addEventListener('click', function Fun1() {
+    p.back_step();
 })
 function check(size, associativity, blocksize){
-    console.log(size, associativity, blocksize);
     if(size/blocksize < associative_input.value && associative_input.value!=100){
         p.cache.associativity = p.cache.blockSize;
         associative_input.value = 1;
@@ -338,5 +437,8 @@ export function getHexMem(address, byte) {
 
     return hexString.charAt(2 * byte) + hexString.charAt(2 * byte + 1);
 }
+export function text_update(){
+    p.updated = false;
+}
 export default Processor;
-// p.run();
+// p.step();

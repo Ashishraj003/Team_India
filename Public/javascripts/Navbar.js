@@ -9,19 +9,7 @@ const selection = document.querySelector(".selection");
 
 bubble.addEventListener("click", () => {
     setValue1(`#Bubble Sort
-    # without  3080 and 5315
-    #with  3080 and 4158
-
-    #for(int i=0;i<n-1;i++)
-    #{
-    #    for(int j=0;j<(n-1-i);j++)
-    #    {
-    #        if(arr[j]>arr[j+1])
-    #        {
-    #            swap(arr[j],arr[j+1]);
-    #        }
-    #    }
-    #}
+    
     .data
     arr: .word  20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1  
     base: .word 0x10000000
@@ -89,36 +77,26 @@ bubble.addEventListener("click", () => {
         lw x15 ,0(x16)
         addi x16 x16 4
     return:
-        addi x1 x1 0`);
+        addi x1 x1 0
+        # without  3080 and 5315
+    #with  3080 and 4158
+
+    #for(int i=0;i<n-1;i++)
+    #{
+    #    for(int j=0;j<(n-1-i);j++)
+    #    {
+    #        if(arr[j]>arr[j+1])
+    #        {
+    #            swap(arr[j],arr[j+1]);
+    #        }
+    #    }
+    #}`);
 })
 
 selection.addEventListener("click", () => {
     setValue2(`#Selection Sort
 
 
-    #void selectionSort(int arr[], int n) 
-    #{ 
-     #   int i, j, min_idx; 
-      
-       # // One by one move boundary of 
-      #  // unsorted subarray 
-     #   for (i = 0; i < n - 1; i++) { 
-      
-        #    // Find the minimum element in 
-       #     // unsorted array 
-      #      min_idx = i; 
-      #      for (j = i + 1; j < n; j++) { 
-      #          if (arr[j] < arr[min_idx]) 
-      #              min_idx = j; 
-     #       } 
-     # 
-     #       // Swap the found minimum element 
-     #       // with the first element 
-     #       if (min_idx != i) 
-     #           swap(arr[min_idx], arr[i]); 
-     #   } 
-    #} 
-    #selection sort
     .data
     .word 1,7,3,2,5,4,3,5,1
     base: .word 0x10000054
@@ -172,5 +150,28 @@ selection.addEventListener("click", () => {
               sw x21 0(x16)
               j OuterLoop
      Exit:
-         addi x1 x0 0`);
+         addi x1 x0 0
+         
+    #void selectionSort(int arr[], int n) 
+    #{ 
+     #   int i, j, min_idx; 
+      
+       # // One by one move boundary of 
+      #  // unsorted subarray 
+     #   for (i = 0; i < n - 1; i++) { 
+      
+        #    // Find the minimum element in 
+       #     // unsorted array 
+      #      min_idx = i; 
+      #      for (j = i + 1; j < n; j++) { 
+      #          if (arr[j] < arr[min_idx]) 
+      #              min_idx = j; 
+     #       } 
+     # 
+     #       // Swap the found minimum element 
+     #       // with the first element 
+     #       if (min_idx != i) 
+     #           swap(arr[min_idx], arr[i]); 
+     #   } 
+    #} `);
 })

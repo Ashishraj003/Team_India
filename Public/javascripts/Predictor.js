@@ -3,7 +3,6 @@ class Predictor
     constructor()
     {
         this.prediction=false;
-        
     }
 
     predict(pc)
