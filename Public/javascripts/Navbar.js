@@ -13,7 +13,8 @@ bubble.addEventListener("click", () => {
     .data
     arr: .word  20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1  
     base: .word 0x10000000
-    
+    str: .string "\\nFinally \\n"
+    str1: .string " "
     .text 
     lw x16 base #intitalizing base address of array to x16
     addi x6 x0 0 #initializing x6 to 0
@@ -77,7 +78,22 @@ bubble.addEventListener("click", () => {
         lw x15 ,0(x16)
         addi x16 x16 4
     return:
-        addi x1 x1 0
+        lw x16 base
+        addi x1 x0 0
+        addi x19 x0 20
+        la a0 str
+        li a7 4
+        ecall
+        Print:
+        lw a0 0(x16)
+        li a7 1
+        ecall
+        la a0 str1
+        li a7 4
+        ecall
+        addi x16 x16 4
+        addi x1 x1 1
+        bne x1 x19 Print
 
     #for(int i=0;i<n-1;i++)
     #{
@@ -98,7 +114,8 @@ selection.addEventListener("click", () => {
     .data
     .word 1,7,3,2,5,4,3,5,1
     base: .word 0x10000054
-    
+    str: .string "\\nFinally \\n"
+    str1: .string " "
     .text
     addi x1 x0 -4 #i=0
     addi x2 x0 0 # min index
@@ -148,7 +165,22 @@ selection.addEventListener("click", () => {
               sw x21 0(x16)
               j OuterLoop
      Exit:
-         addi x1 x0 0
+        lw x16 base
+        addi x1 x0 0
+        addi x19 x0 9
+        la a0 str
+        li a7 4
+        ecall
+        Print:
+        lw a0 0(x16)
+        li a7 1
+        ecall
+        la a0 str1
+        li a7 4
+        ecall
+        addi x16 x16 4
+        addi x1 x1 1
+        bne x1 x19 Print
          
     #void selectionSort(int arr[], int n) 
     #{ 
@@ -171,5 +203,5 @@ selection.addEventListener("click", () => {
      #       if (min_idx != i) 
      #           swap(arr[min_idx], arr[i]); 
      #   } 
-    #} `);
+    #}  `);
 })

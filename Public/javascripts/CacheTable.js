@@ -68,7 +68,8 @@ function updateTable(event) {
     }
     val = parseInt(val);
     if(val>=268435456/bolckSize){
-        // val *= 4;
+        val -= (268435456/(bolckSize/4));
+        val += (268435456);
         var hexString = val.toString(16);
         while (hexString.length < 8) {
             hexString = '0' + hexString;
