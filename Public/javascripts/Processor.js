@@ -237,7 +237,7 @@ class Processor {
         }
         this.cores[0].ipc = this.cores[0].NumberofInstructions/(this.cores[0].numberofCycles);
         this.cores[1].ipc = this.cores[1].NumberofInstructions/(this.cores[1].numberofCycles);
-        cprint("\n\n\nNumber of instruction are: "+this.cores[0].NumberofInstructions,0);
+        cprint("\nNumber of instruction are: "+this.cores[0].NumberofInstructions,0);
         cprint("the number of cycle are: "+this.cores[0].numberofCycles,0);
         cprint("the number of stalls are: "+(this.cores[0].numberofCycles-this.cores[0].NumberofInstructions),0);
         cprint("\n\n\nNumber of instruction are: "+this.cores[1].NumberofInstructions,1);
@@ -252,7 +252,8 @@ class Processor {
         cprint("No. of access : " + (this.cache.acceses), 1);
         cprint("Missrate : " + (this.cache.misses/this.cache.acceses), 0);
         cprint("Missrate : " + (this.cache.misses/this.cache.acceses), 1);
-
+        cprint("\n\n\n", 0);
+        cprint("\n\n\n", 1);
         
         
         update(this.cores[0].pip_data, this.cores[0].pcs);

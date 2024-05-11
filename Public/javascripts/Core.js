@@ -1,6 +1,6 @@
 import Instruction from "./Instruction.js";
 import { getBus, setBus } from "./Processor.js";
-import { cprint } from "./console_.js";
+import { cprintstr } from "./console_.js";
 import { ChangeColor , highlightError} from "./editor.js";
 import Predictor from "./Predictor.js";
 import Cache from "./cache.js";
@@ -620,13 +620,13 @@ class Core {
     ecall(){
         if(this.register[17]== 4 && this.stringBuffer!=undefined)
             {
-                cprint(this.stringBuffer, this.id-1);
+                cprintstr(this.stringBuffer, this.id-1);
             }
             else if(this.register[17]== 1)
             {
-                cprint(this.register[10], this.id-1);
+                cprintstr(this.register[10], this.id-1);
             }else if(this.register[17]==10){
-                cprint("Program terminated\nExit code 0\n", this.id-1);
+                cprintstr("Program terminated\nExit code 0\n", this.id-1);
             }
     }
     mul(instructionObj) {

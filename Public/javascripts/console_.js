@@ -75,6 +75,15 @@ export function cprint(str, x){
     consoles[x].scrollPageDown();
     consoles[x].setHighlightSelectedWord(true);
 }
+export function cprintstr(str, x){
+    const lastRow = consoles[x].session.getLength() - 1;
+    const lastColumn = consoles[x].session.getLine(lastRow).length;
+    consoles[x].moveCursorTo(lastRow, lastColumn);
+    consoles[x].selection.clearSelection();
+    consoles[x].insert(str+" ");
+    consoles[x].scrollPageDown();
+    consoles[x].setHighlightSelectedWord(true);
+}
 
 export function focus(){
     console1.insert("");

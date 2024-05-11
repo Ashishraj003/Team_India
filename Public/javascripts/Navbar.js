@@ -78,8 +78,6 @@ bubble.addEventListener("click", () => {
         addi x16 x16 4
     return:
         addi x1 x1 0
-        # without  3080 and 5315
-    #with  3080 and 4158
 
     #for(int i=0;i<n-1;i++)
     #{
