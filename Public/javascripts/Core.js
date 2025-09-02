@@ -15,12 +15,19 @@ class Core {
     constructor(num) {
         this.id = num;
         this.regUpdateArr = new Array(32);
-        for (let i = 0; i < 32; i++) {
-            this.regUpdateArr[i] = document.getElementById(`reg${this.id}Text${i}`);
-        }
+            
+        // for (let i = 0; i < 32; i++) {
+        //     this.regUpdateArr[i] = document.getElementById(`reg${this.id}Text${i}`);
+        // }
+        
         this.labels = {};
         this.EnableForwarding = false;
         this.predictor = new Predictor();
+    }
+    attachDom(){
+        for (let i = 0; i < 32; i++) {
+        this.regUpdateArr[i] = document.getElementById(`reg${this.id}Text${i}`);
+        }
     }
     Initialize(CoreInstructions, pcs, cache) {
         
@@ -649,5 +656,6 @@ class Core {
     }
 
 }
+
 
 export default Core;

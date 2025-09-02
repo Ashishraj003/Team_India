@@ -14,6 +14,10 @@ class Processor {
         this.clock = 0;
         this.cache = new Cache();
         this.cores = [new Core(1), new Core(2)];
+        document.addEventListener('DOMContentLoaded', () => {
+            this.cores[0].attachDom();
+            this.cores[1].attachDom();
+        });
         this.freeMemInitial = 0;
         this.freeMemfinal = 2 ** 12 - 1;
         this.pcs = [-1, -1]; //pc start
