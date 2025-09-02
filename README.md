@@ -1,5 +1,5 @@
 # READ ME
-* Through Link    https://team-india.onrender.com/ <br>
+* Through Link   https://teamindia.vercel.app/ <br>
 ## Minutes Meetings
 **Date: $23^{rd}$ Feburary**
 **Members : Anuj Sharma , Ashish Raj , Veerain Sood**
